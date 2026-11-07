@@ -133,8 +133,6 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
   padding:14px var(--gr) 12px var(--gl);
 }
 .brand{display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 280px}
-.mark{width:34px;height:34px;flex:none}
-.mark .m0{fill:var(--aqua)} .mark .m1{fill:var(--aqua-ink)}
 .ttl{display:grid;min-width:0;flex:1}
 .title{
   width:100%; min-width:0; margin:0 0 0 -8px; padding:2px 8px; border:0; border-radius:8px; background:transparent;
@@ -430,7 +428,6 @@ button.cal-day:hover{background:var(--hover)}
 /* Entrar */
 .scrim.auth{align-items:center;background:var(--bg)}
 .authbox{width:min(380px,100%);gap:16px;padding:28px 24px 24px}
-.authbox .mark{width:44px;height:44px}
 .authtitle{margin:0;font:700 calc(24px * var(--fs,1))/1.1 var(--display);letter-spacing:-.02em}
 .authmsg{margin:4px 0 0;min-height:1.4em;font-size:calc(13px * var(--fs,1));color:var(--muted)}
 .authmsg.bad{color:var(--bad)}
@@ -489,7 +486,6 @@ button.cal-day:hover{background:var(--hover)}
 <body>
 
 <svg class="sprite" aria-hidden="true" focusable="false"><defs>
-  <symbol id="logo" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" style="fill:var(--aqua)"/><rect x="7" y="8" width="4.5" height="14" rx="2.25" style="fill:var(--aqua-ink)"/><rect x="13.75" y="8" width="4.5" height="9" rx="2.25" style="fill:var(--aqua-ink)"/><rect x="20.5" y="8" width="4.5" height="17" rx="2.25" style="fill:var(--aqua-ink)"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
   <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
@@ -590,7 +586,6 @@ button.cal-day:hover{background:var(--hover)}
 
 <div id="auth" class="scrim auth" hidden>
   <form id="authForm" class="sheet authbox" aria-label="Entrar no quadro" novalidate>
-    <svg class="mark" aria-hidden="true"><use href="#logo"/></svg>
     <div>
       <h2 class="authtitle">Entrar</h2>
       <p id="authMsg" class="authmsg" role="status"></p>
