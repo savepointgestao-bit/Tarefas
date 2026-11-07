@@ -248,7 +248,15 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
 .ctitle{display:flex;gap:7px;font-size:calc(14.5px * var(--fs,1));font-weight:500;line-height:1.35}
 .ctitle span{min-width:0;overflow-wrap:anywhere}
 .ctitle .ico{width:16px;height:16px;margin-top:1px;color:var(--ok);stroke-width:2.4}
+.card.done{opacity:.5}
+.card.done:hover,.card.done:focus-visible{opacity:.85}
 .card.done .ctitle{color:var(--muted)}
+.cdone{flex:none;display:grid;place-items:center;width:20px;height:20px;margin-top:1px;padding:0;border:2px solid var(--faint);border-radius:50%;background:transparent;color:var(--aqua-ink)}
+.cdone:hover:not(:disabled){border-color:var(--aqua)}
+.cdone.on{background:var(--aqua);border-color:var(--aqua)}
+.ctitle .cdone .ico{width:12px;height:12px;margin:0;color:inherit;stroke-width:3}
+.donerow{display:flex;align-items:center;gap:10px;font-weight:600;cursor:pointer}
+.donerow input{width:20px;height:20px;accent-color:var(--aqua)}
 .labels{display:flex;gap:5px;flex-wrap:wrap}
 .lab{
   padding:1px 8px; border-radius:6px; background:var(--lane); color:var(--fg);
@@ -492,6 +500,110 @@ button.cal-day:hover{background:var(--hover)}
   .fonts{grid-template-columns:repeat(2,minmax(0,1fr))}
   .settings .mf #sDone{flex:1 1 100%}
 }
+
+/* ===== Novos recursos: início, empresa, etiquetas, colunas, checklist ===== */
+.view{flex:1;min-height:0;overflow:auto;padding:22px var(--gr) 40px var(--gl)}
+.view[hidden]{display:none}
+.vh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.vh h2{margin:0;flex:1;min-width:200px;font:700 calc(22px * var(--fs,1))/1.2 var(--display);letter-spacing:-.015em;text-transform:capitalize}
+.hcols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.hcols.wide{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
+.hcols.one{grid-template-columns:minmax(0,1fr)}
+.hcol{display:grid;gap:14px;align-content:start;min-width:0}
+.hcol>.w{grid-column:auto}
+@media (max-width:900px){.hcols,.hcols.wide{grid-template-columns:minmax(0,1fr)}}
+.hgrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px;align-items:stretch;align-content:start}
+.w{grid-column:span 6;display:grid;gap:10px;min-width:0;padding:16px;border-radius:var(--r-lane);background:var(--card);box-shadow:0 0 0 1px var(--line)}
+.w.s{grid-column:span 4}.w.l{grid-column:span 12}.w.off{opacity:.5}
+@media (max-width:900px){.w,.w.s{grid-column:span 12}}
+.wh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.wh h3{margin:0;flex:1;font:700 calc(15px * var(--fs,1))/1.3 var(--display)}
+.wedit{display:flex;gap:4px;align-items:center}
+.rowitem{display:flex;align-items:center;gap:9px;width:100%;padding:9px 11px;border:0;border-radius:10px;background:var(--lane);text-align:left}
+.rowitem:hover{box-shadow:inset 0 0 0 1.5px var(--aqua)}
+.rowitem .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list{display:grid;gap:6px}
+.bar{display:block;height:8px;border-radius:99px;background:var(--lane);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--aqua)}
+.calnav{display:flex;align-items:center;gap:6px}.calnav b{flex:1;text-transform:capitalize;font-family:var(--display)}
+.bigcal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.bigcal .wd{text-align:center;font-size:calc(12px * var(--fs,1));font-weight:700;color:var(--muted)}
+.dc{min-height:72px;display:grid;align-content:start;gap:3px;padding:5px;border-radius:10px;background:var(--lane);overflow:hidden}
+.dc.today{box-shadow:inset 0 0 0 2px var(--aqua)}.dc.off{opacity:.45}
+.dc .n{font-size:calc(12px * var(--fs,1));font-weight:700;color:var(--muted)}
+.dc .more{font-size:11px;color:var(--muted)}
+.chip{display:block;width:100%;padding:2px 6px;border:0;border-left:3px solid var(--lc,var(--aqua));border-radius:6px;background:var(--card);text-align:left;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip.done{text-decoration:line-through;color:var(--faint)}
+@media (max-width:600px){.dc{min-height:64px;padding:3px}.chip{font-size:10px;padding:1px 3px}}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.tile{padding:10px;border-radius:12px;background:var(--lane);display:grid}
+.tile b{font:700 calc(22px * var(--fs,1)) var(--display)}.tile.late b{color:var(--bad)}
+.vals{display:flex;gap:6px;flex-wrap:wrap}.vals span{padding:5px 11px;border-radius:999px;background:var(--accent-soft);font-weight:600}
+.empty{margin:0;color:var(--muted);font-size:calc(13px * var(--fs,1))}
+.crow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start;padding:10px;border-radius:12px;background:var(--lane)}
+.cf{display:grid;gap:8px;min-width:0}.crow .field{background:var(--card)}
+.crow .m-desc{background:var(--card);min-height:56px}
+.crow input[type=range]{width:100%;accent-color:var(--aqua)}
+.cgrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}
+.sheet.wide{width:min(640px,100%)}
+.mrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px;border-radius:12px;background:var(--lane)}
+.mrow .field{flex:1;min-width:130px;background:var(--card)}
+.cpick{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.cp{flex:none;width:22px;height:22px;padding:0;border:0;border-radius:50%}
+.cp[aria-pressed="true"]{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--fg)}
+.grip{display:inline-grid;place-items:center;width:26px;height:30px;color:var(--faint);cursor:grab}
+.grip .ico{fill:currentColor;stroke:none}
+.ckhead{display:flex;align-items:center;gap:10px}.ckhead .bar{flex:1}
+.ck{display:flex;align-items:center;gap:8px}
+.ck input[type=checkbox]{width:18px;height:18px;flex:none;accent-color:var(--aqua)}
+.ck .field{height:34px;background:var(--lane)}
+.ck.done .field{text-decoration:line-through;color:var(--faint)}
+.mt.ok{color:var(--ok)}
+.ico.rot{transform:rotate(90deg)}
+.vh h2{text-transform:none}
+.sheet.wide{gap:10px}
+.bwrap{flex:1;min-height:0;display:flex}
+.bwrap>.board{flex:1;min-width:0}
+.bside{flex:none;width:214px;display:flex;flex-direction:column;gap:3px;overflow-y:auto;padding:12px 10px var(--gb) var(--gl);border-right:1px solid var(--line)}
+.bs-h{display:flex;align-items:center;justify-content:space-between;padding:0 4px 6px 8px}
+.bs-h span{font-size:calc(11.5px * var(--fs,1));font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.bi{position:relative;display:flex;align-items:center;border-radius:10px}
+.bi:hover{background:var(--hover)}
+.bi[aria-current="true"]{background:var(--accent-soft)}
+.bi .bn{flex:1;min-width:0;padding:9px 10px;border:0;border-radius:10px;background:transparent;text-align:left;color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bi[aria-current="true"] .bn,.bi .bn:hover{color:var(--fg)}
+.bi .icon-btn{opacity:0}
+.bi:hover .icon-btn,.bi[aria-current="true"] .icon-btn,.bi .icon-btn:focus-visible{opacity:1}
+.bi.over{box-shadow:0 -2px 0 var(--aqua)}
+.bi .menu{right:0;min-width:200px}
+.bi .field{height:34px;margin:2px 4px 2px 0}
+.addbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 14px;margin-bottom:14px;border-radius:14px;background:var(--lane)}
+@media (max-width:760px){
+  .bwrap{flex-direction:column}
+  .bside{width:auto;flex-direction:row;align-items:center;overflow-x:auto;overflow-y:hidden;padding:8px var(--gr) 0 var(--gl);border-right:0}
+  .bi{flex:none}.bs-h span{display:none}
+}
+.mcol{display:grid;gap:8px;padding:10px;border-radius:12px;background:var(--lane)}
+.mrow1{display:flex;align-items:center;gap:6px}.mrow1 .field{flex:1;min-width:0;background:var(--card)}
+.mrow2{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between}
+.mrow2 label{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--muted)}
+.co-hero{grid-column:span 12;display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between;padding:24px;border-radius:var(--r-lane);background:linear-gradient(135deg,var(--accent-soft),var(--card) 75%);box-shadow:0 0 0 1px var(--line)}
+.co-hero h1{margin:4px 0 0;font:700 calc(30px * var(--fs,1))/1.1 var(--display);letter-spacing:-.02em}
+.eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:calc(11.5px * var(--fs,1));font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.eyebrow .ico{width:15px;height:15px}
+.hstats{display:flex;gap:10px;flex-wrap:wrap}.hstats .tile{min-width:96px;background:var(--card);box-shadow:0 0 0 1px var(--line)}
+.bigta{width:100%;min-height:92px;padding:0;border:0;outline:none;resize:vertical;background:transparent;color:var(--fg);font:500 calc(17px * var(--fs,1))/1.5 var(--display)}
+.bigta::placeholder{color:var(--faint)}.bigta:focus{box-shadow:0 2px 0 var(--aqua)}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.tile2{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding:14px;border-radius:14px;background:var(--lane);align-items:start}
+.tgrid.num .tile2{grid-template-columns:auto minmax(0,1fr)}
+.tile2 .x{position:absolute;top:6px;right:6px}
+.tile2 .field{background:var(--card);font-weight:600}.tile2 .m-desc{background:var(--card);min-height:56px}
+.tile2 .cf>.field:first-child{padding-right:34px}
+.num{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--aqua);color:var(--aqua-ink);font-weight:700}
+.pctbig{font:700 calc(24px * var(--fs,1)) var(--display)}
+.w .cojoin span{background:var(--card)}
+.org-wrap{overflow-x:auto;padding:6px 0}
 </style>
 
 </head>
@@ -514,6 +626,8 @@ button.cal-day:hover{background:var(--hover)}
   <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></symbol>
   <symbol id="i-grip" viewBox="0 0 24 24"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></symbol>
   <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h8M18 7h2M4 17h2M12 17h8"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11 12 4l8 7M6 9.5V20h12V9.5M10 20v-5h4v5"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 21V4M6 5h11l-2 4 2 4H6"/></symbol>
 </defs></svg>
 
 <header class="top">
@@ -527,8 +641,9 @@ button.cal-day:hover{background:var(--hover)}
     </div>
   </div>
   <nav class="tabs" role="tablist" aria-label="Seções">
-    <button type="button" class="tab" role="tab" data-view="quadro" aria-selected="true" aria-label="Quadro"><svg class="ico"><use href="#i-board"/></svg><span class="lbl">Quadro</span></button>
-    <button type="button" class="tab" role="tab" data-view="organograma" aria-selected="false" aria-label="Organograma" tabindex="-1"><svg class="ico"><use href="#i-org"/></svg><span class="lbl">Organograma</span></button>
+    <button type="button" class="tab" role="tab" data-view="inicio" aria-selected="true" aria-label="Início"><svg class="ico"><use href="#i-home"/></svg><span class="lbl">Início</span></button>
+    <button type="button" class="tab" role="tab" data-view="quadro" aria-selected="false" tabindex="-1" aria-label="Quadro"><svg class="ico"><use href="#i-board"/></svg><span class="lbl">Quadro</span></button>
+    <button type="button" class="tab" role="tab" data-view="empresa" aria-selected="false" tabindex="-1" aria-label="Empresa"><svg class="ico"><use href="#i-flag"/></svg><span class="lbl">Empresa</span></button>
   </nav>
   <div class="tools">
     <div id="tb" class="tools-board">
@@ -544,8 +659,12 @@ button.cal-day:hover{background:var(--hover)}
   </div>
 </header>
 <div id="notice" class="notice" role="status" hidden></div>
-<main id="board" class="board" aria-label="Quadro de tarefas"></main>
-<section id="org" class="org" aria-label="Organograma" hidden></section>
+<div id="bwrap" class="bwrap">
+  <aside id="boards" class="bside" aria-label="Quadros"></aside>
+  <main id="board" class="board" aria-label="Quadro de tarefas"></main>
+</div>
+<section id="home" class="view" aria-label="Tela inicial" hidden></section>
+<section id="company" class="view" aria-label="Empresa" hidden></section>
 
 <button type="button" id="fab" class="fab" hidden aria-label="Novo cartão" title="Novo cartão (arraste para mover)"><svg class="ico"><use href="#i-plus"/></svg></button>
 <aside id="calFloat" class="calbox" role="dialog" aria-label="Calendário de tarefas" hidden></aside>
@@ -558,13 +677,15 @@ button.cal-day:hover{background:var(--hover)}
     </div>
     <textarea id="mTitle" class="m-title" rows="1" maxlength="140" aria-label="Título do cartão" placeholder="O que precisa ser feito?" autocomplete="off"></textarea>
     <textarea id="mDesc" class="m-desc" rows="3" maxlength="2000" aria-label="Descrição" placeholder="Detalhes (opcional)"></textarea>
+    <label class="donerow"><input type="checkbox" id="mDone"><span>Tarefa concluída</span></label>
     <div class="props">
       <div class="prop"><label for="mCol">Coluna</label><select id="mCol" class="sel"></select></div>
       <div class="prop"><label for="mDue">Prazo</label><input id="mDue" type="date" class="sel"></div>
     </div>
     <div class="prop"><span class="plabel">Prioridade</span><div id="mPrio" class="seg" role="group" aria-label="Prioridade"></div></div>
     <div class="prop"><span class="plabel">Responsáveis</span><div id="mTeam" class="labpick"></div></div>
-    <div class="prop"><span class="plabel">Etiquetas</span><div id="mLabels" class="labpick"></div></div>
+    <div class="prop"><span class="plabel">Etiquetas</span><div id="mLabels" class="labpick"></div><button type="button" id="mLabEdit" class="link" style="justify-self:start">Criar ou editar etiquetas</button></div>
+    <div class="prop"><span class="plabel">Checklist</span><div id="mCheck" class="list"></div></div>
     <div class="mf">
       <button type="button" id="mDel" class="btn quiet danger">Excluir</button>
       <span class="sp"></span>
@@ -572,6 +693,8 @@ button.cal-day:hover{background:var(--hover)}
     </div>
   </form>
 </div>
+
+<div id="mgScrim" class="scrim" hidden><div id="mgSheet" class="sheet wide" role="dialog" aria-modal="true" tabindex="-1"></div></div>
 
 <div id="setScrim" class="scrim" hidden>
   <div id="setSheet" class="sheet settings" role="dialog" aria-modal="true" aria-labelledby="setHead" tabindex="-1">
@@ -614,7 +737,7 @@ button.cal-day:hover{background:var(--hover)}
 <script>
 const $ = (s, r = document) => r.querySelector(s);
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-3);
-const LABELS = [
+const LABELS_DEF = [
   { k: 'bug', n: 'BUG', c: 'var(--l-bug)' },
   { k: 'remover', n: 'REMOVER', c: 'var(--l-remover)' },
   { k: 'adicionar', n: 'ADICIONAR', c: 'var(--l-adicionar)' },
@@ -623,6 +746,7 @@ const LABELS = [
   { k: 'reuniao', n: 'REUNIÃO', c: 'var(--l-reuniao)' },
   { k: 'marketing', n: 'MARKETING', c: 'var(--l-marketing)' },
 ];
+let LABELS = LABELS_DEF.map((l) => ({ ...l }));
 const LEGACY = { meet: 'reuniao' };
 const labelKeys = (arr) => (arr || []).map((k) => LEGACY[k] || k).filter((k) => LABELS.some((l) => l.k === k));
 const TEAM = [
@@ -691,11 +815,12 @@ const byOrder = (a, b) => (a.order || 0) - (b.order || 0);
 
 const COLDOTS = ['var(--faint)', 'var(--aqua)', 'var(--warn)', 'var(--l-design)', 'var(--l-reuniao)', 'var(--l-marketing)'];
 function colColor(col) {
-  if (col.done) return 'var(--ok)';
-  const i = [...state.cols].sort(byOrder).findIndex((c) => c.id === col.id);
+  if (col.color) return col.color;
+  const i = state.cols.filter((x) => bid(x) === bid(col)).sort(byOrder).findIndex((c) => c.id === col.id);
   return COLDOTS[Math.max(0, i) % COLDOTS.length];
 }
-const isDone = (c) => { const col = state.cols.find((x) => x.id === c.col); return !!(col && col.done); };
+/* Marcado no próprio cartão. Cartões antigos (sem marca) seguem a coluna em que estavam. */
+const isDone = (c) => { if (typeof c.done === 'boolean') return c.done; const col = state.cols.find((x) => x.id === c.col); return !!(col && col.done); };
 
 let toastTimer = 0;
 function toast(msg) {
@@ -761,8 +886,8 @@ function saveTitle(title) {
 }
 
 function defaultCols() {
-  return [['A fazer', false], ['Em andamento', false], ['Em revisão', false], ['Concluído', true]]
-    .map(([title, done], i) => ({ id: uid(), title, order: (i + 1) * 1000, done }));
+  return [['A fazer', false], ['Em andamento', false], ['Em revisão', false], ['Concluído', false]]
+    .map(([title, done], i) => ({ id: uid(), board: ex.board, title, order: (i + 1) * 1000, done }));
 }
 function welcomeCards(cols) {
   const now = Date.now();
@@ -784,15 +909,17 @@ function visible(c) {
 }
 
 function cardEl(c, col) {
-  const late = c.due && !col.done && c.due < todayStr();
+  const done = isDone(c);
+  const late = c.due && !done && c.due < todayStr();
   const labs = labelKeys(c.labels).map((k) => LABELS.find((l) => l.k === k));
   const who = assigneeKeys(c.assignees);
   const meta = [];
   if (c.priority) meta.push(h('span', { class: 'mt p p-' + c.priority, title: 'Prioridade ' + PRIOS[c.priority].toLowerCase() }, PRIOS[c.priority]));
   if (c.due) meta.push(h('span', { class: 'mt' + (late ? ' late' : ''), title: late ? 'Atrasado' : 'Prazo' }, ico('cal'), dueText(c.due)));
+  if (c.checklist && c.checklist.length) { const dn = c.checklist.filter((i) => i.d).length; meta.push(h('span', { class: 'mt' + (dn === c.checklist.length ? ' ok' : ''), title: 'Checklist' }, ico('check'), dn + '/' + c.checklist.length)); }
   if (c.desc) meta.push(h('span', { class: 'mt', title: 'Tem descrição' }, ico('text')));
   const el = h('div', {
-    class: 'card' + (col.done ? ' done' : ''), tabindex: 0, role: 'button', 'data-id': c.id,
+    class: 'card' + (done ? ' done' : ''), tabindex: 0, role: 'button', 'data-id': c.id,
     'aria-label': 'Abrir cartão: ' + c.title,
     onclick: () => { if (!dragMoved) openCard(c.id); },
     onkeydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCard(c.id); } },
@@ -800,7 +927,12 @@ function cardEl(c, col) {
     ondragstart: (e) => e.preventDefault(),
     oncontextmenu: (e) => { if (press || state.drag) e.preventDefault(); },
   },
-    h('div', { class: 'ctitle' }, col.done && ico('check'), h('span', null, c.title)),
+    h('div', { class: 'ctitle' },
+      h('button', { type: 'button', class: 'cdone' + (done ? ' on' : ''), role: 'checkbox', 'aria-checked': done ? 'true' : 'false', disabled: !state.canWrite,
+        title: done ? 'Reabrir tarefa' : 'Marcar como concluída', 'aria-label': (done ? 'Reabrir: ' : 'Concluir: ') + c.title,
+        onpointerdown: (e) => e.stopPropagation(), onkeydown: (e) => e.stopPropagation(),
+        onclick: (e) => { e.stopPropagation(); put('cards', { ...c, done: !done, updated: Date.now() }); render(); } }, done && ico('check')),
+      h('span', null, c.title)),
     labs.length > 0 && h('div', { class: 'labels' }, labs.map((l) => h('span', { class: 'lab', style: '--lc:' + l.c }, l.n))),
     (meta.length > 0 || who.length > 0) && h('div', { class: 'meta' }, meta,
       who.length > 0 && h('span', { class: 'avs' }, who.slice(0, 4).map((id) => avatar(teamOf(id))))),
@@ -827,7 +959,7 @@ function renameCol(col, btn) {
 }
 
 function moveCol(col, dir) {
-  const list = [...state.cols].sort(byOrder);
+  const list = bCols().sort(byOrder);
   const i = list.findIndex((c) => c.id === col.id);
   const j = i + dir;
   if (j < 0 || j >= list.length) return;
@@ -840,7 +972,7 @@ function closeMenus() { document.querySelectorAll('.menu').forEach((m) => m.remo
 
 function colMenu(col, head, nameBtn) {
   closeMenus();
-  const list = [...state.cols].sort(byOrder);
+  const list = bCols().sort(byOrder);
   const i = list.findIndex((c) => c.id === col.id);
   const n = state.cards.filter((c) => c.col === col.id).length;
   const delBtn = h('button', { type: 'button', class: 'danger' }, 'Excluir coluna');
@@ -862,7 +994,6 @@ function colMenu(col, head, nameBtn) {
     h('button', { type: 'button', onclick: () => { closeMenus(); renameCol(col, nameBtn); } }, 'Renomear'),
     h('button', { type: 'button', disabled: i === 0, onclick: () => { closeMenus(); moveCol(col, -1); } }, 'Mover para a esquerda'),
     h('button', { type: 'button', disabled: i === list.length - 1, onclick: () => { closeMenus(); moveCol(col, 1); } }, 'Mover para a direita'),
-    h('button', { type: 'button', onclick: () => { closeMenus(); put('cols', { ...col, done: !col.done }); render(); } }, col.done ? 'Deixar de contar como concluída' : 'Contar como coluna de concluídos'),
     delBtn);
   head.append(menu);
   setTimeout(() => document.addEventListener('click', closeMenus, { once: true }), 0);
@@ -877,7 +1008,7 @@ function colEl(col) {
     ? h('button', { class: 'col-name', type: 'button', title: 'Renomear coluna', onclick: () => renameCol(col, nameBtn) }, col.title)
     : h('span', { class: 'col-name' }, col.title);
   const head = h('div', { class: 'col-h' },
-    h('span', { class: 'dot', style: '--dc:' + colColor(col), title: col.done ? 'Coluna de concluídos' : null }),
+    h('span', { class: 'dot', style: '--dc:' + colColor(col), title: null }),
     nameBtn,
     h('span', { class: 'count' }, filtering ? vis.length + '/' + all.length : all.length),
     state.canWrite && h('button', { class: 'icon-btn sm', type: 'button', 'aria-label': 'Ações da coluna ' + col.title, 'aria-haspopup': 'menu', onclick: (e) => { e.stopPropagation(); colMenu(col, head, nameBtn); } }, ico('more')));
@@ -1277,7 +1408,7 @@ function showPerson(id) {
   setView('quadro');
 }
 
-function renderOrg() {
+function orgChart() {
   const ready = state.loaded.cols && state.loaded.cards;
   const parts = [];
   ORG.forEach((p, i) => {
@@ -1300,7 +1431,7 @@ function renderOrg() {
       h('div', { class: 'area', style: 'grid-area:a' + n }, h('b', null, p.area), h('span', null, p.scope)));
   });
   parts.push(h('div', { class: 'cojoin', style: 'grid-area:j', 'aria-hidden': 'true' }, h('span', null, 'Co-CEOs')));
-  $('#org').replaceChildren(h('div', { class: 'org-chart', role: 'group', 'aria-label': 'Organograma: ' + ORG.map((p) => teamOf(p.id).full).join(' e ') + ', co-CEOs' }, parts));
+  return (h('div', { class: 'org-chart', role: 'group', 'aria-label': 'Organograma: ' + ORG.map((p) => teamOf(p.id).full).join(' e ') + ', co-CEOs' }, parts));
 }
 
 /* ---------- Configurações (salvas neste aparelho) ---------- */
@@ -1431,9 +1562,9 @@ function wireSettings() {
 /* ---------- Render principal ---------- */
 function renderChrome() {
   const ready = state.loaded.cols && state.loaded.cards;
-  const n = state.cards.length;
-  const doneIds = new Set(state.cols.filter((c) => c.done).map((c) => c.id));
-  const d = state.cards.filter((c) => doneIds.has(c.col)).length;
+  const bIds = new Set(bCols().map((c) => c.id)), bc = state.cards.filter((c) => bIds.has(c.col));
+  const n = bc.length;
+  const d = bc.filter(isDone).length;
   const pct = ready && n ? Math.round((d / n) * 100) : 0;
   $('#prog').classList.toggle('full', ready && n > 0 && d === n);
   $('#prog').setAttribute('aria-valuenow', String(pct));
@@ -1453,9 +1584,14 @@ function fitBoardTitle() {
 
 function render() {
   if (state.drag) { state.pending = true; return; }
+  const ae = document.activeElement;
+  if (state.view === 'empresa' && ae && /^(INPUT|TEXTAREA)$/.test(ae.tagName) && ae.closest('#company')) { state.typing = true; return; }
+  ensureBoards();
   renderChrome();
+  renderBoards();
   calRenderFloat();
-  if (state.view === 'organograma') { renderOrg(); return; }
+  if (state.view === 'inicio') { renderHome(); return; }
+  if (state.view === 'empresa') { renderCompany(); return; }
 
   const board = $('#board');
   const sl = board.scrollLeft;
@@ -1463,7 +1599,7 @@ function render() {
   board.querySelectorAll('.cards,.cal-body').forEach((e) => { st[e.dataset.col || 'cal'] = e.scrollTop; });
 
   const ready = state.loaded.cols && state.loaded.cards;
-  const cols = [...state.cols].sort(byOrder);
+  const cols = bCols().sort(byOrder);
   let nodes;
   if (state.error) {
     nodes = [h('div', { class: 'state' }, h('h2', null, 'Não deu para abrir o quadro'), h('p', null, state.error))];
@@ -1490,18 +1626,19 @@ function render() {
   board.querySelectorAll('.cards,.cal-body').forEach((e) => { const k = e.dataset.col || 'cal'; if (st[k]) e.scrollTop = st[k]; });
 }
 
+const VIEWS = ['inicio', 'quadro', 'empresa'];
+const viewFromHash = () => { const v = location.hash.slice(1); return v === 'organograma' ? 'empresa' : VIEWS.includes(v) ? v : 'inicio'; };
 function setView(v) {
-  state.view = v === 'organograma' ? 'organograma' : 'quadro';
-  const org = state.view === 'organograma';
-  try { history.replaceState(null, '', org ? '#organograma' : location.pathname + location.search); } catch (e) { /* sem histórico */ }
+  state.view = VIEWS.includes(v) ? v : 'inicio';
+  try { history.replaceState(null, '', '#' + state.view); } catch (e) { /* sem histórico */ }
   document.querySelectorAll('.tab').forEach((b) => {
     const on = b.dataset.view === state.view;
     b.setAttribute('aria-selected', on ? 'true' : 'false');
     b.tabIndex = on ? 0 : -1;
   });
-  $('#board').hidden = org;
-  $('#org').hidden = !org;
-  $('#tb').hidden = org;
+  const ids = { inicio: '#home', quadro: '#bwrap', empresa: '#company' };
+  Object.entries(ids).forEach(([k, s]) => { $(s).hidden = k !== state.view; });
+  $('#tb').hidden = state.view !== 'quadro';
   closeMenus();
   togglePop(false);
   render();
@@ -1512,8 +1649,8 @@ function seedColumns() {
   render();
 }
 function newColumn() {
-  const max = Math.max(0, ...state.cols.map((c) => c.order || 0));
-  const col = { id: uid(), title: 'Nova coluna', order: max + 1000, done: false };
+  const max = Math.max(0, ...bCols().map((c) => c.order || 0));
+  const col = { id: uid(), board: ex.board, title: 'Nova coluna', order: max + 1000, done: false };
   put('cols', col);
   render();
   const btn = document.querySelector('.col[aria-label="Nova coluna"] .col-name');
@@ -1556,7 +1693,10 @@ function moveCard(id, colId, prevEl, nextEl) {
   else if (p) o = p.order + 1000;
   else if (n) o = n.order - 1000;
   else o = Math.max(0, ...state.cards.filter((x) => x.col === colId && x.id !== id).map((x) => x.order || 0)) + 1000;
-  put('cards', { ...c, col: colId, order: o, updated: Date.now() });
+  /* Coluna marcada como de concluídos: entrar nela conclui o cartão e sair dela reabre. */
+  const from = state.cols.find((x) => x.id === c.col), to = state.cols.find((x) => x.id === colId);
+  const flip = from && to && from.id !== to.id && !!from.done !== !!to.done;
+  put('cards', { ...c, col: colId, order: o, ...(flip ? { done: !!to.done } : {}), updated: Date.now() });
   if (p && n && Math.abs(n.order - p.order) < 1e-6) renormalize(colId);
 }
 
@@ -1757,7 +1897,7 @@ function fitTitle() {
 function openCard(id) {
   const isNew = !id;
   const c = isNew ? null : state.cards.find((x) => x.id === id);
-  const cols = [...state.cols].sort(byOrder);
+  const cols = state.cols.filter((x) => bid(x) === (c ? boardOfCard(c) : ex.board)).sort(byOrder);
   if ((!isNew && !c) || !cols.length) return;
   closeMenus();
   togglePop(false);
@@ -1773,15 +1913,20 @@ function openCard(id) {
   $('#mCol').replaceChildren(...cols.map((col) => h('option', { value: col.id }, col.title)));
   $('#mCol').value = isNew ? (cols.some((x) => x.id === state.lastCol) ? state.lastCol : cols[0].id) : c.col;
   $('#mDue').value = isNew ? '' : (c.due || '');
+  $('#mDone').checked = !isNew && isDone(c);
+  $('#mDone').disabled = ro;
   ['#mTitle', '#mDesc', '#mCol', '#mDue'].forEach((s) => { $(s).disabled = ro; });
   $('#mSave').hidden = ro;
   $('#mSave').textContent = isNew ? 'Criar cartão' : 'Salvar';
   $('#mDel').hidden = ro || isNew;
+  $('#mLabEdit').hidden = ro;
   $('#mDel').textContent = 'Excluir';
   $('#mDel').classList.remove('armed');
   renderPrioPick();
   renderLabelPick();
   renderTeamPick();
+  state.mCheck = isNew ? [] : (c.checklist || []).map((x) => ({ ...x }));
+  renderCheck();
   $('#scrim').hidden = false;
   document.body.classList.add('modal-open');
   fitTitle();
@@ -1799,14 +1944,16 @@ function saveCard(e) {
   e.preventDefault();
   const title = $('#mTitle').value.trim();
   if (!title) { $('#mTitle').focus(); toast('Dê um título ao cartão.'); return; }
+  const pend = $('#mCheck .ck-add');
+  if (pend && pend.value.trim()) { state.mCheck.push({ id: uid(), t: pend.value.trim(), d: false }); pend.value = ''; }
   const now = Date.now();
   let col = $('#mCol').value;
   if (state.isNew) {
-    if (!state.cols.some((x) => x.id === col)) col = [...state.cols].sort(byOrder)[0].id;
+    if (!state.cols.some((x) => x.id === col)) col = bCols().sort(byOrder)[0].id;
     const card = {
       id: uid(), col, order: Math.max(0, ...state.cards.filter((x) => x.col === col).map((x) => x.order || 0)) + 1000,
       title, desc: $('#mDesc').value.trim(), priority: state.mPrio, due: $('#mDue').value,
-      labels: state.mLabels, assignees: state.sel, created: now, updated: now,
+      labels: state.mLabels, assignees: state.sel, checklist: state.mCheck.filter((i) => i.t), done: $('#mDone').checked, created: now, updated: now,
     };
     put('cards', card);
     state.lastCol = col;
@@ -1824,7 +1971,7 @@ function saveCard(e) {
   if (col !== c.col) order = Math.max(0, ...state.cards.filter((x) => x.col === col).map((x) => x.order || 0)) + 1000;
   put('cards', {
     ...c, title, col, order, desc: $('#mDesc').value.trim(), priority: state.mPrio,
-    due: $('#mDue').value, labels: state.mLabels, assignees: state.sel, updated: now,
+    due: $('#mDue').value, labels: state.mLabels, assignees: state.sel, checklist: state.mCheck.filter((i) => i.t), done: $('#mDone').checked, updated: now,
   });
   closeCard();
   render();
@@ -1843,6 +1990,322 @@ function deleteCard() {
   closeCard();
   render();
   toast('Cartão excluído');
+}
+
+/* ================= Novos recursos ================= */
+const EX_KEY = 'quadro-equipe:extra';
+const HOME_DEF = [{ k: 'calendario', on: true }, { k: 'urgentes', on: true }, { k: 'objetivos', on: true }, { k: 'resumo', on: true }, { k: 'semana', on: false }, { k: 'valores', on: false }];
+const WN = { calendario: 'Calendário', urgentes: 'Tarefas urgentes', objetivos: 'Objetivos', resumo: 'Resumo do quadro', semana: 'Próximos 7 dias', valores: 'Missão e valores' };
+const SW = ['#D2412F', '#E07B2E', '#B57400', '#1E8A55', '#12806F', '#2175C3', '#4C6FD1', '#7C4DC4', '#C93F82', '#5E6B73'];
+const ex = { boards: [{ id: 'principal', name: 'Principal' }], board: 'principal', company: { mission: '', vision: '', values: [], goals: [], notes: [] }, home: HOME_DEF.map((w) => ({ ...w })), ym: null, edit: false };
+/* Dados compartilhados com a equipe: etiquetas, quadros, missão, visão, valores, objetivos e notas.
+   Com login, ficam no servidor, uma chave por vez. Sem login, só neste aparelho.
+   O desenho da tela inicial e o quadro aberto são escolha de cada pessoa e ficam sempre neste aparelho. */
+const EX_SHARED = ['labels', 'boards', 'mission', 'vision', 'values', 'goals', 'notes'];
+const EX_DEF = () => ({ labels: LABELS_DEF, boards: [{ id: 'principal', name: 'Principal' }], mission: '', vision: '', values: [], goals: [], notes: [] });
+const exGet = (k) => (k === 'labels' ? LABELS : k === 'boards' ? ex.boards.filter((b) => !b.tmp).map((b) => ({ id: b.id, name: b.name })) : ex.company[k]);
+const exPut = (k, v) => { if (k === 'labels') LABELS = v; else if (k === 'boards') ex.boards = v; else ex.company[k] = v; };
+const exSnap = {};
+let exSynced = false;
+let exBusy = 0;
+const exTxt = (v, n) => (typeof v === 'string' ? v.slice(0, n) : '');
+const exRows = (v, n) => (Array.isArray(v) ? v.filter((x) => x && typeof x === 'object').slice(0, n) : null);
+const EX_COLOR = /^(#[0-9a-fA-F]{3,8}|var\(--l-[a-z]+\))$/;
+/* Confere o formato de um dado vindo do servidor ou do aparelho. undefined = inválido, é ignorado. */
+function exClean(k, v) {
+  if (k === 'mission' || k === 'vision') return typeof v === 'string' ? exTxt(v, 800) : undefined;
+  const a = exRows(v, 60);
+  if (!a) return undefined;
+  if (k === 'labels') return a.filter((l) => typeof l.k === 'string' && l.k && typeof l.c === 'string' && EX_COLOR.test(l.c)).map((l) => ({ k: l.k.slice(0, 40), n: exTxt(l.n, 20) || 'ETIQUETA', c: l.c }));
+  if (k === 'boards') { const b = a.filter((x) => typeof x.id === 'string' && x.id).map((x) => ({ id: x.id.slice(0, 40), name: exTxt(x.name, 30) || 'Quadro' })); return b.length ? b : undefined; }
+  if (k === 'values') return a.map((x) => ({ id: exTxt(x.id, 40) || uid(), t: exTxt(x.t, 100), d: exTxt(x.d, 800) }));
+  if (k === 'goals') return a.map((x) => ({ id: exTxt(x.id, 40) || uid(), t: exTxt(x.t, 100), p: Math.max(0, Math.min(100, Math.round(+x.p || 0))), due: /^\d{4}-\d{2}-\d{2}$/.test(x.due) ? x.due : '' }));
+  if (k === 'notes') return a.map((x) => ({ id: exTxt(x.id, 40) || uid(), title: exTxt(x.title, 100), text: exTxt(x.text, 800) }));
+  return undefined;
+}
+function exLoad() {
+  try {
+    const s = JSON.parse(localStorage.getItem(EX_KEY));
+    if (!s || typeof s !== 'object') return;
+    const sh = { ...(s.company && typeof s.company === 'object' ? s.company : {}), labels: s.labels, boards: s.boards };
+    EX_SHARED.forEach((k) => { const v = sh[k] === undefined ? undefined : exClean(k, sh[k]); if (v !== undefined) exPut(k, v); });
+    if (typeof s.board === 'string' && s.board) ex.board = s.board;
+    if (Array.isArray(s.home)) ex.home = HOME_DEF.map((d) => ({ k: d.k, on: (s.home.find((w) => w && w.k === d.k) || d).on }));
+  } catch (e) { /* sem armazenamento */ }
+}
+function exSave(localOnly) {
+  try { localStorage.setItem(EX_KEY, JSON.stringify({ labels: LABELS, company: ex.company, home: ex.home, boards: ex.boards, board: ex.board })); } catch (e) { /* sem armazenamento */ }
+  if (localOnly || !exSynced || state.mode !== 'sb' || !state.sb) return;
+  EX_SHARED.forEach((k) => {
+    const v = exGet(k), j = JSON.stringify(v);
+    if (j === exSnap[k]) return;
+    exSnap[k] = j;
+    exBusy++;
+    enqueue('extra/' + k, () => sbSaveExtra(k, v)
+      .catch((e) => { exSnap[k] = null; throw e; })
+      .finally(() => { exBusy--; if (!exBusy) sbSoon('quadro'); }));
+  });
+}
+/* Traz do servidor o que a equipe guardou. Espera quando há gravação em andamento ou alguém digitando,
+   para não apagar o que está sendo escrito; a próxima atualização aplica. */
+function exApplyRemote(d) {
+  const a = document.activeElement;
+  if (exBusy || !$('#mgScrim').hidden || (a && /^(INPUT|TEXTAREA)$/.test(a.tagName) && a.closest('#company, #boards'))) return;
+  const data = d && typeof d === 'object' ? d : {};
+  const def = EX_DEF();
+  EX_SHARED.forEach((k) => {
+    const v = data[k] === undefined ? undefined : exClean(k, data[k]);
+    if (v !== undefined) { exPut(k, v); exSnap[k] = JSON.stringify(exGet(k)); }
+    else exSnap[k] = JSON.stringify(def[k]);
+  });
+  exSynced = true;
+  exSave(); /* primeira vez: sobe o que só existia neste aparelho */
+}
+
+/* ----- janela de gerenciamento (etiquetas e colunas) ----- */
+function openMg(build) {
+  build($('#mgSheet'));
+  $('#mgScrim').hidden = false;
+  document.body.classList.add('modal-open');
+}
+function closeMg() {
+  $('#mgScrim').hidden = true;
+  if ($('#scrim').hidden) document.body.classList.remove('modal-open'); else renderLabelPick();
+  if (!LABELS.some((l) => l.k === state.fLabel)) state.fLabel = '';
+  buildFilters(); syncFilters(); render();
+}
+const LDEF_HEX = { 'var(--l-bug)': '#D2412F', 'var(--l-remover)': '#5E6B73', 'var(--l-adicionar)': '#1E8A55', 'var(--l-sugestao)': '#B57400', 'var(--l-design)': '#7C4DC4', 'var(--l-reuniao)': '#2175C3', 'var(--l-marketing)': '#C93F82' };
+const mgHead = (t) => h('div', { class: 'sh-top' }, h('span', { class: 'sh-head' }, t), h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Fechar', onclick: closeMg }, ico('x')));
+const swatches = (cur, pick) => h('span', { class: 'cpick' }, SW.map((c) => h('button', { type: 'button', class: 'cp', style: 'background:' + c, 'aria-label': 'Cor ' + c, 'aria-pressed': (LDEF_HEX[cur] || cur) === c ? 'true' : 'false', onclick: () => pick(c) })));
+
+function labelsMg(s) {
+  const draw = () => fill(s, mgHead('Etiquetas dos cartões'),
+    ...LABELS.map((l, i) => h('div', { class: 'mrow' },
+      h('input', { class: 'field', maxlength: 20, value: l.n, 'aria-label': 'Nome da etiqueta', onchange: (e) => { l.n = e.target.value.trim().toUpperCase() || l.n; e.target.value = l.n; exSave(); } }),
+      swatches(l.c, (c) => { l.c = c; exSave(); draw(); }),
+      h('button', { type: 'button', class: 'icon-btn sm', 'aria-label': 'Excluir etiqueta ' + l.n, onclick: () => { LABELS.splice(i, 1); exSave(); draw(); } }, ico('x')))),
+    LABELS.length === 0 && h('p', { class: 'empty' }, 'Nenhuma etiqueta. Crie a primeira.'),
+    h('button', { type: 'button', class: 'btn', onclick: () => { LABELS.push({ k: uid(), n: 'NOVA', c: SW[LABELS.length % SW.length] }); exSave(); draw(); } }, ico('plus'), 'Nova etiqueta'),
+    h('p', { class: 'note' }, 'Etiquetas excluídas somem dos cartões. ' + (state.mode === 'sb' ? 'Valem para toda a equipe.' : 'Ficam salvas neste aparelho.')));
+  draw();
+}
+
+function fill(el, ...kids) { el.replaceChildren(...kids.flat(9).filter((x) => x != null && x !== false)); }
+const bid = (x) => x.board || 'principal';
+const colsOf = (id) => state.cols.filter((c) => bid(c) === id);
+const bCols = () => colsOf(ex.board);
+const boardOfCard = (c) => { const k = state.cols.find((x) => x.id === c.col); return k ? bid(k) : ex.board; };
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+function ensureBoards() {
+  let ch = false;
+  state.cols.forEach((c) => { const b = bid(c); if (!ex.boards.some((x) => x.id === b)) { ex.boards.push({ id: b, name: 'Quadro ' + (ex.boards.length + 1), tmp: true }); ch = true; } });
+  if (!ex.boards.some((b) => b.id === ex.board)) { ex.board = ex.boards[0].id; ch = true; }
+  if (ch) exSave(true);
+}
+function switchBoard(id) { ex.board = id; exSave(); closeMenus(); render(); }
+function newBoard() {
+  const b = { id: uid(), name: 'Novo quadro' };
+  ex.boards.push(b); ex.board = b.id; exSave();
+  defaultCols().forEach((c) => put('cols', c));
+}
+let boardDrag = null;
+function delBoard(id) {
+  const ids = colsOf(id).map((k) => k.id);
+  state.cards.filter((c) => ids.includes(c.col)).forEach((c) => del('cards', c.id));
+  colsOf(id).forEach((k) => del('cols', k.id));
+  ex.boards = ex.boards.filter((b) => b.id !== id);
+  if (ex.board === id) ex.board = ex.boards[0].id;
+  exSave();
+}
+function reorderBoard(from, to) {
+  const a = ex.boards.findIndex((x) => x.id === from), b = ex.boards.findIndex((x) => x.id === to);
+  if (a < 0 || b < 0 || a === b) return;
+  ex.boards.splice(b, 0, ex.boards.splice(a, 1)[0]);
+  exSave(); render();
+}
+function renameBoard(b, item) {
+  const btn = item.querySelector('.bn');
+  const inp = h('input', { class: 'field', maxlength: 30, 'aria-label': 'Nome do quadro' });
+  inp.value = b.name;
+  let done = false;
+  const fin = (save) => { if (done) return; done = true; const v = inp.value.trim(); if (save && v) { b.name = v; delete b.tmp; } exSave(); render(); };
+  inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') fin(true); if (e.key === 'Escape') { e.stopPropagation(); fin(false); } });
+  inp.addEventListener('blur', () => fin(true));
+  item.removeAttribute('draggable');
+  btn.replaceWith(inp);
+  inp.focus(); inp.select();
+}
+function boardMenu(b, i, item) {
+  closeMenus();
+  const ids = colsOf(b.id).map((k) => k.id), n = state.cards.filter((c) => ids.includes(c.col)).length;
+  let armed = false;
+  const mv = (d) => { closeMenus(); const j = i + d; [ex.boards[i], ex.boards[j]] = [ex.boards[j], ex.boards[i]]; exSave(); render(); };
+  const rm = h('button', { type: 'button', class: 'danger', disabled: ex.boards.length < 2, onclick: (e) => {
+    e.stopPropagation();
+    if (!armed) { armed = true; rm.textContent = n ? 'Confirmar: excluir quadro e ' + n + (n === 1 ? ' cartão' : ' cartões') : 'Confirmar exclusão'; return; }
+    delBoard(b.id); closeMenus(); render(); toast('Quadro excluído');
+  } }, 'Excluir quadro');
+  const menu = h('div', { class: 'menu', role: 'menu' },
+    h('button', { type: 'button', onclick: () => { closeMenus(); renameBoard(b, item); } }, 'Renomear'),
+    h('button', { type: 'button', disabled: i === 0, onclick: () => mv(-1) }, 'Mover para cima'),
+    h('button', { type: 'button', disabled: i === ex.boards.length - 1, onclick: () => mv(1) }, 'Mover para baixo'),
+    rm);
+  /* Fica solto na página, e não dentro da lista de quadros: no celular a lista rola de lado e cortaria o menu. */
+  const r = item.getBoundingClientRect();
+  menu.style.cssText = 'position:fixed;z-index:60;right:auto;min-width:200px;top:' + Math.round(r.bottom + 4) + 'px;left:' + Math.round(Math.max(8, Math.min(r.right - 200, innerWidth - 208))) + 'px';
+  document.body.append(menu);
+  if (r.bottom + 4 + menu.offsetHeight > innerHeight - 8) menu.style.top = Math.max(8, Math.round(r.top - menu.offsetHeight - 4)) + 'px';
+  setTimeout(() => document.addEventListener('click', closeMenus, { once: true }), 0);
+  window.addEventListener('resize', closeMenus, { once: true });
+  $('#boards').addEventListener('scroll', closeMenus, { once: true });
+}
+function renderBoards() {
+  if (state.view !== 'quadro') return;
+  fill($('#boards'),
+    h('div', { class: 'bs-h' }, h('span', null, 'Quadros'),
+      state.canWrite && h('button', { type: 'button', class: 'icon-btn sm', title: 'Novo quadro', 'aria-label': 'Novo quadro', onclick: () => {
+        newBoard(); render();
+        const it = $('#boards .bi[aria-current="true"]'); if (it) renameBoard(ex.boards[ex.boards.length - 1], it);
+      } }, ico('plus'))),
+    ex.boards.map((b, i) => {
+      const item = h('div', { class: 'bi', 'aria-current': b.id === ex.board ? 'true' : null, draggable: state.canWrite ? 'true' : null,
+        ondragstart: (e) => { boardDrag = b.id; e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', b.id); } catch (x) { /* ok */ } },
+        ondragover: (e) => { if (boardDrag) { e.preventDefault(); item.classList.add('over'); } },
+        ondragleave: () => item.classList.remove('over'),
+        ondrop: (e) => { e.preventDefault(); const f = boardDrag; boardDrag = null; reorderBoard(f, b.id); },
+        ondragend: () => { boardDrag = null; } },
+        h('button', { type: 'button', class: 'bn', title: b.name, onclick: () => switchBoard(b.id) }, b.name),
+        state.canWrite && h('button', { type: 'button', class: 'icon-btn sm', 'aria-label': 'Ações do quadro ' + b.name, 'aria-haspopup': 'menu', onclick: (e) => { e.stopPropagation(); boardMenu(b, i, item); } }, ico('more')));
+      return item;
+    }));
+}
+
+
+/* ----- checklist do cartão ----- */
+function renderCheck() {
+  const ro = !state.canWrite, n = state.mCheck.length, d = state.mCheck.filter((i) => i.d).length;
+  const add = h('input', { type: 'text', class: 'field ck-add', maxlength: 120, placeholder: 'Novo item (Enter para adicionar)', disabled: ro, 'aria-label': 'Novo item da checklist',
+    onkeydown: (e) => { if (e.key !== 'Enter') return; e.preventDefault(); e.stopPropagation(); const v = add.value.trim(); if (v) { state.mCheck.push({ id: uid(), t: v, d: false }); renderCheck(); $('#mCheck .ck-add').focus(); } } });
+  fill($('#mCheck'), 
+    n > 0 && h('div', { class: 'ckhead' }, h('span', { class: 'bar' }, h('i', { style: 'width:' + Math.round(d / n * 100) + '%' })), h('span', { class: 'plabel' }, d + '/' + n)),
+    ...state.mCheck.map((it, i) => h('div', { class: 'ck' + (it.d ? ' done' : '') },
+      h('input', { type: 'checkbox', checked: it.d, disabled: ro, 'aria-label': 'Concluir item', onchange: (e) => { it.d = e.target.checked; renderCheck(); } }),
+      h('input', { type: 'text', class: 'field', maxlength: 120, value: it.t, disabled: ro, 'aria-label': 'Texto do item', onchange: (e) => { it.t = e.target.value.trim() || it.t; },
+        onkeydown: (e) => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); e.target.blur(); } } }),
+      !ro && h('button', { type: 'button', class: 'icon-btn sm', 'aria-label': 'Remover item', onclick: () => { state.mCheck.splice(i, 1); renderCheck(); } }, ico('x')))),
+    !ro && add);
+}
+
+/* ----- Início personalizável ----- */
+const openCardsList = () => state.cards.filter((c) => !isDone(c));
+const urgentList = () => { const t = todayStr(); return openCardsList().filter((c) => c.priority === 'alta' || (c.due && c.due <= t)).sort((a, b) => (a.due || '9') < (b.due || '9') ? -1 : 1); };
+function cardRow(c) {
+  const col = state.cols.find((x) => x.id === c.col), late = c.due && c.due < todayStr() && !isDone(c);
+  return h('button', { type: 'button', class: 'rowitem', onclick: () => openCard(c.id) },
+    h('i', { class: 'dot', style: '--dc:' + (col ? colColor(col) : 'var(--faint)') }), h('span', { class: 'grow' }, c.title),
+    ex.boards.length > 1 && col && h('span', { class: 'mt' }, (ex.boards.find((b) => b.id === bid(col)) || {}).name),
+    c.priority === 'alta' && h('span', { class: 'mt p p-alta' }, 'Alta'),
+    c.due && h('span', { class: 'mt' + (late ? ' late' : '') }, ico('cal'), dueText(c.due)));
+}
+const goalBar = (g) => h('div', { class: 'list' }, h('div', { class: 'wh' }, h('b', { style: 'flex:1' }, g.t || 'Sem título'), h('span', { class: 'plabel' }, (g.p || 0) + '%')), h('span', { class: 'bar' }, h('i', { style: 'width:' + (g.p || 0) + '%' })));
+
+function homeCal() {
+  if (!ex.ym) { const d = new Date(); ex.ym = [d.getFullYear(), d.getMonth()]; }
+  const [y, m] = ex.ym, wk = (state.prefs && +state.prefs.week) || 0;
+  const off = (new Date(y, m, 1).getDay() - wk + 7) % 7, rows = Math.ceil((off + new Date(y, m + 1, 0).getDate()) / 7);
+  const by = {};
+  state.cards.forEach((c) => { if (c.due) (by[c.due] = by[c.due] || []).push(c); });
+  const t = todayStr(), cells = [];
+  for (let i = 0; i < rows * 7; i++) {
+    const d = new Date(y, m, 1 - off + i), ds = dstr(d.getFullYear(), d.getMonth(), d.getDate()), list = (by[ds] || []).sort(byOrder);
+    cells.push(h('div', { class: 'dc' + (ds === t ? ' today' : '') + (d.getMonth() !== m ? ' off' : '') }, h('span', { class: 'n' }, d.getDate()),
+      list.slice(0, 3).map((c) => { const k = labelKeys(c.labels)[0], lab = k && LABELS.find((l) => l.k === k);
+        return h('button', { type: 'button', class: 'chip' + (isDone(c) ? ' done' : ''), style: '--lc:' + (lab ? lab.c : 'var(--aqua)'), title: c.title, onclick: () => openCard(c.id) }, c.title); }),
+      list.length > 3 && h('span', { class: 'more' }, '+' + (list.length - 3) + ' mais')));
+  }
+  const go = (n) => { const d = new Date(y, m + n, 1); ex.ym = [d.getFullYear(), d.getMonth()]; renderHome(); };
+  return [h('div', { class: 'calnav' },
+    h('button', { type: 'button', class: 'icon-btn sm', 'aria-label': 'Mês anterior', onclick: () => go(-1) }, ico('chev-l')),
+    h('b', null, MESES[m] + ' ' + y),
+    h('button', { type: 'button', class: 'btn sm quiet', onclick: () => { ex.ym = null; renderHome(); } }, 'Hoje'),
+    h('button', { type: 'button', class: 'icon-btn sm', 'aria-label': 'Próximo mês', onclick: () => go(1) }, ico('chev-r'))),
+  h('div', { class: 'bigcal' }, [0, 1, 2, 3, 4, 5, 6].map((i) => h('span', { class: 'wd' }, WD[(i + wk) % 7])), cells)];
+}
+const goalsEmpty = () => h('p', { class: 'empty' }, 'Nenhum objetivo ainda. ', h('button', { type: 'button', class: 'link', onclick: () => setView('empresa') }, 'Adicionar na aba Empresa'));
+const WBODY = {
+  calendario: homeCal,
+  urgentes: () => { const l = urgentList(); return l.length ? [h('div', { class: 'list' }, l.slice(0, 8).map(cardRow)), l.length > 8 && h('p', { class: 'empty' }, '+' + (l.length - 8) + ' no quadro')] : [h('p', { class: 'empty' }, 'Nada urgente. Prioridade alta e prazos vencidos aparecem aqui.')]; },
+  objetivos: () => ex.company.goals.length ? h('div', { class: 'list' }, ex.company.goals.map(goalBar)) : goalsEmpty(),
+  resumo: () => { const all = state.cards.length, open = openCardsList(), late = open.filter((c) => c.due && c.due < todayStr()).length, pct = all ? Math.round((all - open.length) / all * 100) : 0;
+    return [h('div', { class: 'tiles' }, h('span', { class: 'tile' }, h('b', null, open.length), 'abertas'), h('span', { class: 'tile' + (late ? ' late' : '') }, h('b', null, late), 'atrasadas'), h('span', { class: 'tile' }, h('b', null, all - open.length), 'concluídas'), h('span', { class: 'tile' }, h('b', null, pct + '%'), 'do quadro')), h('span', { class: 'bar' }, h('i', { style: 'width:' + pct + '%' }))]; },
+  semana: () => { const a = todayStr(), e = new Date(); e.setDate(e.getDate() + 7); const b = dstr(e.getFullYear(), e.getMonth(), e.getDate());
+    const l = openCardsList().filter((c) => c.due && c.due >= a && c.due <= b).sort((x, y) => (x.due < y.due ? -1 : 1));
+    return l.length ? h('div', { class: 'list' }, l.map(cardRow)) : h('p', { class: 'empty' }, 'Nenhum prazo nos próximos 7 dias.'); },
+  valores: () => { const c = ex.company; return (c.mission || c.vision || c.values.length) ? [c.mission && h('p', { style: 'margin:0' }, h('b', null, 'Missão: '), c.mission), c.vision && h('p', { style: 'margin:0' }, h('b', null, 'Visão: '), c.vision), c.values.length > 0 && h('div', { class: 'vals' }, c.values.map((v) => h('span', null, v.t)))] : h('p', { class: 'empty' }, 'Preencha a aba Empresa para ver aqui.'); },
+};
+/* Distribui os blocos em duas colunas, sempre pondo o próximo na coluna mais curta. */
+const EST = { calendario: 560, urgentes: 300, objetivos: 230, resumo: 210, semana: 270, valores: 220 };
+function homeLayout(on, card) {
+  const A = [], B = [];
+  let ha = 0, hb = 0;
+  on.forEach((w) => { if (ha <= hb) { A.push(w); ha += EST[w.k]; } else { B.push(w); hb += EST[w.k]; } });
+  const cls = 'hcols' + (B.length ? (on.some((w) => w.k === 'calendario') ? ' wide' : '') : ' one');
+  return h('div', { class: cls }, h('div', { class: 'hcol' }, A.map(card)), B.length > 0 && h('div', { class: 'hcol' }, B.map(card)));
+}
+function renderHome() {
+  const el = $('#home');
+  if (state.gate || !(state.loaded.cols && state.loaded.cards)) { fill(el, h('div', { class: 'state' }, h('h2', null, state.gate || 'Carregando o quadro'))); return; }
+  const st = el.scrollTop;
+  const on = ex.home.filter((w) => w.on);
+  const card = (w) => h('section', { class: 'w' },
+    h('div', { class: 'wh' }, h('h3', null, WN[w.k]),
+      ex.edit && h('button', { type: 'button', class: 'icon-btn sm', title: 'Remover da tela', 'aria-label': 'Remover ' + WN[w.k], onclick: () => { w.on = false; exSave(); renderHome(); } }, ico('x'))),
+    WBODY[w.k]());
+  fill(el,
+    h('div', { class: 'vh' }, h('h2', null, cap(new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }))),
+      h('button', { type: 'button', class: 'btn', 'aria-pressed': ex.edit ? 'true' : 'false', onclick: () => { ex.edit = !ex.edit; renderHome(); } }, ico(ex.edit ? 'check' : 'sliders'), ex.edit ? 'Concluir' : 'Personalizar')),
+    ex.edit && h('div', { class: 'addbar' }, h('span', { class: 'plabel' }, 'Toque para mostrar ou esconder:'),
+      ex.home.map((w) => h('button', { type: 'button', class: 'fc', 'aria-pressed': w.on ? 'true' : 'false', onclick: () => { w.on = !w.on; exSave(); renderHome(); } }, WN[w.k]))),
+    on.length
+      ? homeLayout(on, card)
+      : h('div', { class: 'state' }, h('h2', null, 'Tela inicial vazia'), h('p', null, 'Toque em Personalizar e escolha o que mostrar.')));
+  el.scrollTop = st;
+}
+
+/* ----- Empresa: identidade, equipe (organograma), valores, objetivos ----- */
+const ti = (o, k, ph) => h('input', { class: 'field', maxlength: 100, placeholder: ph, value: o[k] || '', disabled: !state.canWrite, 'aria-label': ph, onchange: (e) => { o[k] = e.target.value.trim(); exSave(); } });
+const ta = (o, k, ph, rows) => h('textarea', { class: 'm-desc', rows: rows || 2, maxlength: 800, placeholder: ph, disabled: !state.canWrite, 'aria-label': ph, onchange: (e) => { o[k] = e.target.value.trim(); exSave(); } }, o[k] || '');
+const big = (k, ph) => h('textarea', { class: 'bigta', maxlength: 800, placeholder: ph, disabled: !state.canWrite, 'aria-label': ph, onchange: (e) => { ex.company[k] = e.target.value.trim(); exSave(); } }, ex.company[k] || '');
+const block = (icon, eyebrow, title, right, ...kids) => h('section', { class: 'w l' },
+  h('div', { class: 'wh' }, h('div', { style: 'flex:1;display:grid;gap:2px' }, h('span', { class: 'eyebrow' }, ico(icon), eyebrow), h('h3', { style: 'flex:none' }, title)), right), ...kids);
+function tileSec(key, icon, eyebrow, title, mk, row, hint, numbered) {
+  const arr = ex.company[key];
+  return block(icon, eyebrow, title, state.canWrite && h('button', { type: 'button', class: 'btn sm', onclick: () => { arr.push(mk()); exSave(); renderCompany(); } }, ico('plus'), 'Adicionar'),
+    arr.length ? h('div', { class: 'tgrid' + (numbered ? ' num' : '') }, arr.map((it, i) => h('div', { class: 'tile2' },
+      numbered && h('span', { class: 'num' }, i + 1), h('div', { class: 'cf' }, row(it)),
+      state.canWrite && h('button', { type: 'button', class: 'icon-btn sm x', 'aria-label': 'Remover', onclick: () => { arr.splice(i, 1); exSave(); renderCompany(); } }, ico('x')))))
+      : h('p', { class: 'empty' }, hint));
+}
+function renderCompany() {
+  const c = ex.company, st = $('#company').scrollTop, ready = state.loaded.cols && state.loaded.cards;
+  if (state.gate) { fill($('#company'), h('div', { class: 'state' }, h('h2', null, state.gate))); return; }
+  fill($('#company'),
+    h('div', { class: 'hgrid' },
+      h('section', { class: 'co-hero' },
+        h('div', null, h('span', { class: 'eyebrow' }, ico('flag'), 'Empresa'), h('h1', null, state.title))),
+      h('section', { class: 'w' }, h('span', { class: 'eyebrow' }, ico('flag'), 'Missão'), big('mission', 'Por que a empresa existe?')),
+      h('section', { class: 'w' }, h('span', { class: 'eyebrow' }, ico('cal'), 'Visão'), big('vision', 'Onde queremos chegar?')),
+      block('org', 'Equipe', 'Organograma', null, h('div', { class: 'org-wrap' }, orgChart())),
+      tileSec('values', 'check', 'Cultura', 'Valores', () => ({ id: uid(), t: '', d: '' }), (v) => [ti(v, 't', 'Valor (ex.: Transparência)'), ta(v, 'd', 'O que ele significa no dia a dia')], 'Adicione os valores que guiam a equipe.', true),
+      tileSec('goals', 'flag', 'Resultados', 'Objetivos', () => ({ id: uid(), t: '', p: 0, due: '' }), (g) => {
+        const pct = h('span', { class: 'pctbig' }, (g.p || 0) + '%'), fillBar = h('i', { style: 'width:' + (g.p || 0) + '%' });
+        return [ti(g, 't', 'Objetivo (ex.: Chegar a 100 clientes)'),
+          h('div', { class: 'ck' }, pct, h('input', { type: 'range', min: 0, max: 100, step: 5, value: g.p || 0, style: 'flex:1;accent-color:var(--aqua)', disabled: !state.canWrite, 'aria-label': 'Progresso', oninput: (e) => { pct.textContent = e.target.value + '%'; fillBar.style.width = e.target.value + '%'; }, onchange: (e) => { g.p = +e.target.value; exSave(); } })),
+          h('span', { class: 'bar' }, fillBar),
+          h('input', { type: 'date', class: 'field', value: g.due || '', disabled: !state.canWrite, 'aria-label': 'Prazo do objetivo', onchange: (e) => { g.due = e.target.value; exSave(); } })];
+      }, 'Defina metas e acompanhe o progresso. Elas aparecem na tela inicial.'),
+      tileSec('notes', 'text', 'Livre', 'Outras informações', () => ({ id: uid(), title: '', text: '' }), (n) => [ti(n, 'title', 'Título (ex.: Público-alvo, Metas do ano)'), ta(n, 'text', 'Conteúdo', 3)], 'Espaço livre para qualquer informação da empresa.')));
+  $('#company').scrollTop = st;
 }
 
 /* ---------- Botão + solto: arraste para onde quiser ---------- */
@@ -1884,7 +2347,7 @@ function fabSet(x, y) {
 }
 
 function syncFab() {
-  const ok = state.view === 'quadro' && state.canWrite && state.loaded.cols && state.loaded.cards && !state.error && !state.gate && state.cols.length > 0;
+  const ok = state.view === 'quadro' && state.canWrite && state.loaded.cols && state.loaded.cards && !state.error && !state.gate && bCols().length > 0;
   $('#fab').hidden = !ok;
 }
 
@@ -1947,6 +2410,7 @@ const sbOk = (r) => { if (r.error) throw r.error; return r; };
 const sbSave = (table, id, data) => state.sb.from(table).upsert({ id, data }).then(sbOk);
 const sbRemove = (table, id) => state.sb.from(table).delete().eq('id', id).then(sbOk);
 const sbSaveTitle = (title) => state.sb.from('quadro').upsert({ id: 1, data: { title } }).then(sbOk);
+const sbSaveExtra = (k, v) => state.sb.rpc('quadro_extra_set', { k, v }).then(sbOk);
 const sbAvailable = () => !!(window.SB_CFG && window.supabase && window.supabase.createClient);
 
 const sbTimers = {};
@@ -1979,12 +2443,16 @@ async function sbLoad(which) {
       }));
     }
     if (!which || which === 'quadro') {
-      jobs.push(sb.from('quadro').select('data').eq('id', 1).maybeSingle().then(sbOk).then((r) => {
-        const t = r.data && r.data.data && r.data.data.title;
-        if (!t) return;
-        state.title = t;
-        const el = $('#boardTitle');
-        if (document.activeElement !== el) el.value = t;
+      jobs.push(sb.from('quadro').select('id,data').in('id', [1, 2]).then(sbOk).then((r) => {
+        const rows = r.data || [];
+        const r1 = rows.find((x) => x.id === 1), r2 = rows.find((x) => x.id === 2);
+        const t = r1 && r1.data && r1.data.title;
+        if (t) {
+          state.title = t;
+          const el = $('#boardTitle');
+          if (document.activeElement !== el) el.value = t;
+        }
+        exApplyRemote(r2 && r2.data);
       }));
     }
     await Promise.all(jobs);
@@ -2022,6 +2490,8 @@ function sbStop() {
 
 function sbSignedOut() {
   sbStop();
+  exSynced = false;
+  exBusy = 0;
   state.cards = [];
   state.cols = [];
   state.loaded = { cols: false, cards: false };
@@ -2092,8 +2562,10 @@ function wireUI() {
   document.addEventListener('pointerdown', (e) => { if (!$('#fPop').hidden && !e.target.closest('.fwrap')) togglePop(false); });
   document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => setView(b.dataset.view)));
   $('#calBtn').addEventListener('click', calToggle);
+  $('#mLabEdit').addEventListener('click', () => openMg(labelsMg));
+  $('#mgScrim').addEventListener('mousedown', (e) => { if (e.target === $('#mgScrim')) closeMg(); });
   window.addEventListener('hashchange', () => {
-    const v = location.hash === '#organograma' ? 'organograma' : 'quadro';
+    const v = viewFromHash();
     if (v !== state.view) setView(v);
   });
   window.addEventListener('resize', () => calPlace());
@@ -2110,6 +2582,23 @@ function wireUI() {
   $('#cardForm').addEventListener('submit', saveCard);
   $('#mTitle').addEventListener('input', fitTitle);
   $('#mTitle').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('#cardForm').requestSubmit(); } });
+  $('#mCol').addEventListener('change', () => {
+    const to = state.cols.find((x) => x.id === $('#mCol').value);
+    const cur = state.openId ? state.cards.find((x) => x.id === state.openId) : null;
+    const from = cur && state.cols.find((x) => x.id === cur.col);
+    if (!to) return;
+    if (from) { if (!!from.done !== !!to.done) $('#mDone').checked = !!to.done; } else if (to.done) $('#mDone').checked = true;
+  });
+  document.addEventListener('focusout', (e) => {
+    if (!state.typing || !(e.target.closest && e.target.closest('#company'))) return;
+    setTimeout(() => {
+      const a = document.activeElement;
+      if (a && /^(INPUT|TEXTAREA)$/.test(a.tagName) && a.closest('#company')) return;
+      state.typing = false;
+      if (state.mode === 'sb' && state.sb && !state.gate) sbSoon('quadro');
+      render();
+    }, 60);
+  });
   $('#mClose').addEventListener('click', closeCard);
   $('#mDel').addEventListener('click', deleteCard);
   $('#scrim').addEventListener('mousedown', (e) => { if (e.target === $('#scrim')) closeCard(); });
@@ -2120,6 +2609,7 @@ function wireUI() {
       if (state.drag) { onCancel(); return; }
       closeMenus();
       togglePop(false);
+      if (!$('#mgScrim').hidden) { closeMg(); return; }
       if (!$('#setScrim').hidden) { closeSettings(); return; }
       if (!$('#scrim').hidden) { closeCard(); return; }
       if (state.cal.open && !state.cal.docked) calClose();
@@ -2196,8 +2686,9 @@ async function init() {
   prefsLoad();
   applyPrefs();
   calLoad();
+  exLoad();
   wireUI();
-  setView(location.hash === '#organograma' ? 'organograma' : 'quadro');
+  setView(viewFromHash());
   if (sbAvailable()) { sbBoot(); return; }
   const [db, user] = await Promise.all([use('db'), use('user')]);
   state.user = user;
