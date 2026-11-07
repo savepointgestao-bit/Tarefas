@@ -179,6 +179,12 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
 }
 
 .lp{font-size:12px;font-weight:600;letter-spacing:.05em}
+.av{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--ac);color:#fff;font:700 10px/1 var(--body);letter-spacing:.02em}
+.tp{display:inline-flex;align-items:center;gap:8px;padding:3px 14px 3px 4px;background:var(--surface);border:1px solid var(--line);border-radius:999px;font-weight:500}
+.tp .av{margin:0;border:0}
+.tp[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:600}
+.tp:disabled{cursor:default}
+.tp:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -190,7 +196,6 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
     <input id="q" class="field" type="search" placeholder="Buscar cartões" aria-label="Buscar cartões">
     <select id="fWho" class="field" aria-label="Filtrar por responsável">
       <option value="">Todos os responsáveis</option>
-      <option value="me">Só os meus</option>
     </select>
     <select id="fPrio" class="field" aria-label="Filtrar por prioridade">
       <option value="">Qualquer prioridade</option>
@@ -232,12 +237,7 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
     <div><span class="lbl">Etiquetas</span><div id="mLabels" class="labpick"></div></div>
     <div id="mWho">
       <span class="lbl">Responsáveis</span>
-      <div id="mChips" class="chips"></div>
-      <div class="whoadd">
-        <input id="mSearch" class="field" type="search" placeholder="Buscar pessoa" aria-label="Buscar pessoa para atribuir" autocomplete="off">
-        <button type="button" id="mMe" class="btn">Atribuir a mim</button>
-      </div>
-      <div id="mResults" class="results" hidden></div>
+      <div id="mTeam" class="labpick"></div>
     </div>
     <div class="mf">
       <button type="button" id="mDel" class="btn danger">Excluir cartão</button>
@@ -263,6 +263,13 @@ const LABELS = [
 ];
 const LEGACY = { meet: 'reuniao' };
 const labelKeys = (arr) => (arr || []).map((k) => LEGACY[k] || k).filter((k) => LABELS.some((l) => l.k === k));
+const TEAM = [
+  { id: 'luis', name: 'Luís', short: 'Lu', color: '#12806F' },
+  { id: 'lais', name: 'Laís', short: 'La', color: '#4C6FD1' },
+];
+const teamOf = (id) => TEAM.find((m) => m.id === id);
+const assigneeKeys = (arr) => (arr || []).filter((id) => teamOf(id));
+const avatar = (m) => h('span', { class: 'av', style: '--ac:' + m.color, title: m.name }, m.short);
 const PRIOS = { alta: 'Alta', media: 'Média', baixa: 'Baixa' };
 
 /* Cria elementos sem innerHTML: texto de outras pessoas nunca vira HTML. */
@@ -372,14 +379,15 @@ function visible(c) {
   if (q && !((c.title || '') + ' ' + (c.desc || '')).toLowerCase().includes(q)) return false;
   if (state.fPrio && c.priority !== state.fPrio) return false;
   if (state.fLabel && !labelKeys(c.labels).includes(state.fLabel)) return false;
-  if (state.fWho === 'me' && !(c.assignees || []).includes(state.meId)) return false;
+  if (state.fWho === 'none') { if (assigneeKeys(c.assignees).length) return false; }
+  else if (state.fWho && !assigneeKeys(c.assignees).includes(state.fWho)) return false;
   return true;
 }
 
 function cardEl(c, col) {
   const late = c.due && !col.done && c.due < todayStr();
   const labs = labelKeys(c.labels).map((k) => LABELS.find((l) => l.k === k));
-  const who = c.assignees || [];
+  const who = assigneeKeys(c.assignees);
   const el = h('div', {
     class: 'card', tabindex: 0, role: 'button', 'data-id': c.id,
     'aria-label': 'Abrir cartão: ' + c.title,
@@ -395,7 +403,7 @@ function cardEl(c, col) {
       c.priority && h('span', { class: 'chip p-' + c.priority }, PRIOS[c.priority]),
       c.due && h('span', { class: 'chip' + (late ? ' late' : '') }, (late ? 'Atrasado · ' : '') + fmtDue(c.due)),
       c.desc && h('span', { class: 'chip', title: 'Tem descrição' }, '≡'),
-      who.length > 0 && h('span', { class: 'avs' }, who.slice(0, 4).map((id) => h('img', { class: 'av', 'data-uid': id, alt: '', src: BLANK, draggable: 'false' })))),
+      who.length > 0 && h('span', { class: 'avs' }, who.slice(0, 4).map((id) => avatar(teamOf(id))))),
   );
   return el;
 }
@@ -541,7 +549,6 @@ function render(focusAdd) {
   }
   const n = state.cards.length;
   $('#stat').textContent = ready ? n + (n === 1 ? ' cartão' : ' cartões') : '';
-  hydrate();
 }
 
 function seedColumns() {
@@ -555,21 +562,6 @@ function newColumn() {
   render();
   const btn = document.querySelector('.col[aria-label="Nova coluna"] .col-name');
   if (btn) renameCol(col, btn);
-}
-
-/* ---------- Pessoas (avatares e nomes) ---------- */
-async function hydrate() {
-  if (!state.user) return;
-  const ids = [...new Set([...document.querySelectorAll('[data-uid]')].map((e) => e.dataset.uid))];
-  if (!ids.length) return;
-  const ps = await state.user.profiles(ids);
-  document.querySelectorAll('[data-uid]').forEach((e) => {
-    const p = ps[e.dataset.uid];
-    if (!p) return;
-    const nome = p.name || 'Pessoa';
-    if (e.tagName === 'IMG') { e.src = p.avatarUrl; e.alt = nome; e.title = nome; }
-    else e.textContent = nome;
-  });
 }
 /* ---------- Arrastar e soltar (mouse e toque) ----------
    Pegou o cartão, soltou em qualquer ponto da coluna: ele fica ali.
@@ -779,15 +771,15 @@ function renderLabelPick() {
   }, l.n)));
 }
 
-function renderChips() {
-  $('#mChips').replaceChildren(...state.sel.map((id) => h('span', { class: 'pchip' },
-    h('img', { class: 'av', 'data-uid': id, alt: '', src: BLANK }),
-    h('span', { 'data-uid': id }, 'Pessoa'),
-    state.canWrite && h('button', {
-      type: 'button', 'aria-label': 'Remover responsável',
-      onclick: () => { state.sel = state.sel.filter((x) => x !== id); renderChips(); },
-    }, '×'))));
-  hydrate();
+function renderTeamPick() {
+  $('#mTeam').replaceChildren(...TEAM.map((m) => h('button', {
+    type: 'button', class: 'tp', disabled: !state.canWrite,
+    'aria-pressed': state.sel.includes(m.id) ? 'true' : 'false',
+    onclick: () => {
+      state.sel = state.sel.includes(m.id) ? state.sel.filter((x) => x !== m.id) : [...state.sel, m.id];
+      renderTeamPick();
+    },
+  }, avatar(m), m.name)));
 }
 
 function openCard(id) {
@@ -796,7 +788,7 @@ function openCard(id) {
   closeMenus();
   const ro = !state.canWrite;
   state.openId = id;
-  state.sel = [...(c.assignees || [])];
+  state.sel = assigneeKeys(c.assignees);
   state.mLabels = labelKeys(c.labels);
   $('#mTitle').value = c.title;
   $('#mDesc').value = c.desc || '';
@@ -809,13 +801,8 @@ function openCard(id) {
   $('#mDel').hidden = ro;
   $('#mDel').textContent = 'Excluir cartão';
   $('#mDel').classList.remove('armed');
-  $('.whoadd').hidden = ro || !state.user;
-  $('#mMe').hidden = !state.meId;
-  $('#mWho').hidden = !state.user || (ro && !state.sel.length);
-  $('#mResults').hidden = true;
-  $('#mSearch').value = '';
   renderLabelPick();
-  renderChips();
+  renderTeamPick();
   $('#scrim').hidden = false;
   if (!ro) $('#mTitle').focus();
 }
@@ -857,25 +844,13 @@ function deleteCard() {
   render();
   toast('Cartão excluído');
 }
-
-async function runSearch(v) {
-  const box = $('#mResults');
-  if (!state.user) { box.hidden = true; return; }
-  let hits = [];
-  try { hits = (await state.user.search(v)).filter((p) => !state.sel.includes(p.id)); } catch (e) { /* sem resultados */ }
-  box.replaceChildren(...(hits.length
-    ? hits.map((p) => h('button', {
-      type: 'button',
-      onclick: () => { state.sel.push(p.id); $('#mSearch').value = ''; box.hidden = true; renderChips(); },
-    }, h('img', { class: 'av', src: p.avatarUrl, alt: '' }), h('span', null, p.name || 'Pessoa')))
-    : [h('div', { class: 'none' }, 'Nenhuma pessoa encontrada')]));
-  box.hidden = false;
-}
 /* ---------- Eventos fixos e arranque ---------- */
 function wireUI() {
   $('#q').addEventListener('input', (e) => { state.q = e.target.value; render(); });
   $('#fWho').addEventListener('change', (e) => { state.fWho = e.target.value; render(); });
   $('#fPrio').addEventListener('change', (e) => { state.fPrio = e.target.value; render(); });
+  TEAM.forEach((m) => $('#fWho').append(h('option', { value: m.id }, m.name)));
+  $('#fWho').append(h('option', { value: 'none' }, 'Sem responsável'));
   LABELS.forEach((l) => $('#fLabel').append(h('option', { value: l.k }, l.n)));
   $('#fLabel').addEventListener('change', (e) => { state.fLabel = e.target.value; render(); });
   const bt = $('#boardTitle');
@@ -896,13 +871,6 @@ function wireUI() {
     closeMenus();
     if (!$('#scrim').hidden) closeCard();
   });
-  $('#mMe').addEventListener('click', () => {
-    if (state.meId && !state.sel.includes(state.meId)) { state.sel.push(state.meId); renderChips(); }
-  });
-  const ms = $('#mSearch');
-  ms.addEventListener('input', () => runSearch(ms.value));
-  ms.addEventListener('focus', () => runSearch(ms.value));
-  ms.addEventListener('blur', () => setTimeout(() => { $('#mResults').hidden = true; }, 180));
 }
 
 const use = (name) => {
@@ -968,10 +936,8 @@ async function init() {
   const [db, user] = await Promise.all([use('db'), use('user')]);
   state.user = user;
   if (user) {
-    try { state.meId = await user.id(); } catch (e) { /* sem identidade */ }
     try { state.canWrite = (await user.can('data.write')) !== false; } catch (e) { /* mantém controles */ }
   }
-  if (!state.meId) { const o = $('#fWho option[value="me"]'); if (o) o.remove(); }
   if (!state.canWrite) $('#boardTitle').readOnly = true;
   if (db) { state.db = db; startDb(); } else startLocal();
 }
