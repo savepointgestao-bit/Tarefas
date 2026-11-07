@@ -44,6 +44,49 @@
   --l-bug:#FF8A7A; --l-remover:#A9B8BF; --l-adicionar:#62D494; --l-sugestao:#F0B84F; --l-design:#B795F2; --l-reuniao:#6AAEF0; --l-marketing:#F07AAE;
 }
 
+/* Cor escolhida nas configurações: tinge fundo, faixas, linhas, bordas e texto, não só o destaque. */
+:root[data-tint]{
+  --bg:color-mix(in srgb,var(--aqua) 12%,#F8F9F9);
+  --lane:color-mix(in srgb,var(--aqua) 19%,#F3F4F4);
+  --card:color-mix(in srgb,var(--aqua) 3%,#FFFFFF);
+  --line:color-mix(in srgb,var(--aqua) 28%,#E7E9E9);
+  --fg:color-mix(in srgb,var(--aqua) 14%,#0C1011);
+  --muted:color-mix(in srgb,var(--aqua) 16%,#4B4F50);
+  --faint:color-mix(in srgb,var(--aqua) 24%,#8A8E8F);
+  --shadow:14 18 20;
+  --edge:color-mix(in srgb,var(--fg) 7%,transparent);
+  --hover:color-mix(in srgb,var(--fg) 8%,transparent);
+  --scrim:color-mix(in srgb,var(--aqua) 14%,rgb(8 12 13 / .5));
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"])[data-tint]{
+    --bg:color-mix(in srgb,var(--aqua) 9%,#0A0D0E);
+    --lane:color-mix(in srgb,var(--aqua) 12%,#101415);
+    --card:color-mix(in srgb,var(--aqua) 14%,#181C1D);
+    --line:color-mix(in srgb,var(--aqua) 22%,#272C2D);
+    --fg:color-mix(in srgb,var(--aqua) 8%,#F2F4F4);
+    --muted:color-mix(in srgb,var(--aqua) 20%,#A4A9AA);
+    --faint:color-mix(in srgb,var(--aqua) 22%,#6C7172);
+    --shadow:0 0 0;
+    --edge:color-mix(in srgb,var(--fg) 9%,transparent);
+    --hover:color-mix(in srgb,var(--fg) 9%,transparent);
+    --scrim:color-mix(in srgb,var(--aqua) 10%,rgb(2 4 5 / .66));
+  }
+}
+:root[data-theme="dark"][data-tint]{
+  --bg:color-mix(in srgb,var(--aqua) 9%,#0A0D0E);
+  --lane:color-mix(in srgb,var(--aqua) 12%,#101415);
+  --card:color-mix(in srgb,var(--aqua) 14%,#181C1D);
+  --line:color-mix(in srgb,var(--aqua) 22%,#272C2D);
+  --fg:color-mix(in srgb,var(--aqua) 8%,#F2F4F4);
+  --muted:color-mix(in srgb,var(--aqua) 20%,#A4A9AA);
+  --faint:color-mix(in srgb,var(--aqua) 22%,#6C7172);
+  --shadow:0 0 0;
+  --edge:color-mix(in srgb,var(--fg) 9%,transparent);
+  --hover:color-mix(in srgb,var(--fg) 9%,transparent);
+  --scrim:color-mix(in srgb,var(--aqua) 10%,rgb(2 4 5 / .66));
+}
+
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -467,7 +510,6 @@ button.cal-day:hover{background:var(--hover)}
 
 <header class="top">
   <div class="brand">
-    <svg class="mark" aria-hidden="true"><use href="#logo"/></svg>
     <div class="ttl">
       <input id="boardTitle" class="title" aria-label="Nome da equipe" maxlength="60" value="Quadro da Equipe">
       <div id="prog" class="prog" role="progressbar" aria-label="Cartões concluídos" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -530,7 +572,7 @@ button.cal-day:hover{background:var(--hover)}
       <button type="button" id="setClose" class="icon-btn" aria-label="Fechar"><svg class="ico"><use href="#i-x"/></svg></button>
     </div>
     <div class="sg"><span class="plabel">Tema</span><div id="sTheme" class="seg" role="group" aria-label="Tema"></div></div>
-    <div class="sg"><span class="plabel">Cor de destaque</span><div id="sColor" class="swatches"></div></div>
+    <div class="sg"><span class="plabel">Cor do tema</span><div id="sColor" class="swatches"></div></div>
     <div class="sg"><span class="plabel">Fonte</span><div id="sFont" class="fonts"></div></div>
     <div class="sg"><span class="plabel">Tamanho da letra</span><div id="sSize" class="seg" role="group" aria-label="Tamanho da letra"></div></div>
     <div class="sg"><span class="plabel">Espaçamento</span><div id="sDens" class="seg" role="group" aria-label="Espaçamento"></div></div>
@@ -1306,8 +1348,10 @@ function applyPrefs() {
   const p = state.prefs;
   const root = document.documentElement;
   if (p.theme === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', p.theme);
-  if (p.color) { root.style.setProperty('--aqua', p.color); root.style.setProperty('--aqua-ink', inkFor(p.color)); }
-  else { root.style.removeProperty('--aqua'); root.style.removeProperty('--aqua-ink'); }
+  if (p.color) { root.style.setProperty('--aqua', p.color); root.style.setProperty('--aqua-ink', inkFor(p.color)); root.setAttribute('data-tint', ''); }
+  else { root.style.removeProperty('--aqua'); root.style.removeProperty('--aqua-ink'); root.removeAttribute('data-tint'); }
+  const tc = document.querySelector('meta[name="theme-color"]');
+  if (tc) tc.setAttribute('content', p.color || '#37C9B3');
   const f = FONTS.find((x) => x.id === p.font) || FONTS[0];
   if (f.id === 'padrao') { root.style.removeProperty('--body'); root.style.removeProperty('--display'); }
   else { root.style.setProperty('--body', fontStack(f, 'body')); root.style.setProperty('--display', fontStack(f, 'disp')); loadFonts([f]); }
