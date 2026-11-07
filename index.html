@@ -185,6 +185,12 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
 .tp[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:600}
 .tp:disabled{cursor:default}
 .tp:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#auth{background:var(--bg)}
+.authbox{width:min(380px,100%)}
+.authbox .field{width:100%}
+.authtitle{margin:0;font:700 22px/1.1 var(--display);letter-spacing:-.015em}
+.authmsg{margin:0;min-height:1.4em;font-size:13px;color:var(--muted)}
+.authmsg.bad{color:var(--bad)}
 </style>
 </head>
 <body>
@@ -206,6 +212,7 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
     <select id="fLabel" class="field" aria-label="Filtrar por etiqueta">
       <option value="">Todas as etiquetas</option>
     </select>
+    <button type="button" id="logout" class="btn" hidden>Sair</button>
   </div>
 </header>
 <div id="notice" class="notice" role="status" hidden></div>
@@ -247,7 +254,18 @@ body.is-dragging,body.is-dragging *{cursor:grabbing!important}
     </div>
   </form>
 </div>
+<div id="auth" class="scrim" hidden>
+  <form id="authForm" class="modal authbox" aria-label="Entrar no quadro" novalidate>
+    <h2 class="authtitle">Entrar no quadro</h2>
+    <p id="authMsg" class="authmsg" role="status"></p>
+    <div><label class="lbl" for="aEmail">E-mail</label><input id="aEmail" type="email" class="field" autocomplete="username" inputmode="email"></div>
+    <div><label class="lbl" for="aPass">Senha</label><input id="aPass" type="password" class="field" autocomplete="current-password"></div>
+    <button type="submit" id="aSubmit" class="btn primary">Entrar</button>
+  </form>
+</div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script src="supabase.js"></script>
+<script>window.SB_CFG={url:"https://shhixiyzvqgvzrtxsgps.supabase.co",key:"sb_publishable_kr1vG-1LOjiY0WtyXIJn-Q_a6-eqJqk"};</script>
 <script>
 const $ = (s, r = document) => r.querySelector(s);
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-3);
@@ -293,7 +311,7 @@ const state = {
   cols: [], cards: [], title: 'Quadro da Equipe',
   q: '', fWho: '', fPrio: '', fLabel: '',
   loaded: { cols: false, cards: false }, error: '',
-  db: null, user: null, meId: null, canWrite: true, mode: 'local',
+  db: null, sb: null, rt: null, gate: '', user: null, meId: null, canWrite: true, mode: 'local',
   drag: null, pending: false, addCol: null, addText: '',
   openId: null, sel: [], mLabels: [],
 };
@@ -347,6 +365,9 @@ function put(kind, obj) {
     const { id, ...body } = obj;
     const p = pathOf(kind, id);
     enqueue(p, () => state.db.doc(p).set(body));
+  } else if (state.mode === 'sb') {
+    const { id, ...body } = obj;
+    enqueue(kind + '/' + id, () => sbSave(SB_TABLE[kind], id, body));
   } else lsSave();
 }
 function del(kind, id) {
@@ -354,11 +375,14 @@ function del(kind, id) {
   if (state.mode === 'db') {
     const p = pathOf(kind, id);
     enqueue(p, () => state.db.doc(p).delete());
+  } else if (state.mode === 'sb') {
+    enqueue(kind + '/' + id, () => sbRemove(SB_TABLE[kind], id));
   } else lsSave();
 }
 function saveTitle(title) {
   state.title = title;
   if (state.mode === 'db') enqueue('meta', () => state.db.doc('meta/board').set({ title }));
+  else if (state.mode === 'sb') enqueue('meta', () => sbSaveTitle(title));
   else lsSave();
 }
 
@@ -529,6 +553,8 @@ function render(focusAdd) {
   let nodes;
   if (state.error) {
     nodes = [h('div', { class: 'state' }, h('h2', null, 'Não deu para abrir o quadro'), h('p', null, state.error))];
+  } else if (state.gate) {
+    nodes = [h('div', { class: 'state' }, h('h2', null, state.gate))];
   } else if (!ready) {
     nodes = [h('div', { class: 'state' }, h('h2', null, 'Carregando o quadro'), h('p', null, 'Buscando as colunas e os cartões da equipe.'))];
   } else if (!cols.length) {
@@ -844,6 +870,146 @@ function deleteCard() {
   render();
   toast('Cartão excluído');
 }
+/* ---------- Banco online (Supabase) com login ----------
+   Só liga quando a página traz window.SB_CFG e a biblioteca do Supabase. */
+const SB_TABLE = { cards: 'cartoes', cols: 'colunas' };
+const sbOk = (r) => { if (r.error) throw r.error; return r; };
+const sbSave = (table, id, data) => state.sb.from(table).upsert({ id, data }).then(sbOk);
+const sbRemove = (table, id) => state.sb.from(table).delete().eq('id', id).then(sbOk);
+const sbSaveTitle = (title) => state.sb.from('quadro').upsert({ id: 1, data: { title } }).then(sbOk);
+const sbAvailable = () => !!(window.SB_CFG && window.supabase && window.supabase.createClient);
+
+const sbTimers = {};
+let sbPoll = 0;
+
+function authMsg(text, bad) {
+  const m = $('#authMsg');
+  m.textContent = text || '';
+  m.classList.toggle('bad', !!bad);
+}
+function showAuth() {
+  $('#auth').hidden = false;
+  $('#aEmail').focus();
+}
+
+async function sbLoad(which) {
+  const sb = state.sb;
+  try {
+    const jobs = [];
+    if (!which || which === 'colunas') {
+      jobs.push(sb.from('colunas').select('id,data').then(sbOk).then((r) => {
+        state.cols = r.data.map((x) => ({ id: x.id, ...x.data }));
+        state.loaded.cols = true;
+      }));
+    }
+    if (!which || which === 'cartoes') {
+      jobs.push(sb.from('cartoes').select('id,data').then(sbOk).then((r) => {
+        state.cards = r.data.map((x) => ({ id: x.id, ...x.data }));
+        state.loaded.cards = true;
+      }));
+    }
+    if (!which || which === 'quadro') {
+      jobs.push(sb.from('quadro').select('data').eq('id', 1).maybeSingle().then(sbOk).then((r) => {
+        const t = r.data && r.data.data && r.data.data.title;
+        if (!t) return;
+        state.title = t;
+        const el = $('#boardTitle');
+        if (document.activeElement !== el) el.value = t;
+      }));
+    }
+    await Promise.all(jobs);
+    setNotice('');
+  } catch (e) {
+    setNotice('Sem conexão com o servidor. O quadro pode estar desatualizado e vai tentar de novo.');
+  }
+  render();
+}
+
+function sbSoon(table) {
+  clearTimeout(sbTimers[table]);
+  sbTimers[table] = setTimeout(() => sbLoad(table), 150);
+}
+function onVisible() {
+  if (!document.hidden && state.sb && !state.gate) sbLoad();
+}
+
+function sbStart() {
+  sbLoad();
+  state.rt = state.sb.channel('quadro-equipe');
+  ['cartoes', 'colunas', 'quadro'].forEach((t) => {
+    state.rt.on('postgres_changes', { event: '*', schema: 'public', table: t }, () => sbSoon(t));
+  });
+  state.rt.subscribe();
+  sbPoll = setInterval(() => { if (!document.hidden && !state.drag) sbLoad(); }, 45000);
+  document.addEventListener('visibilitychange', onVisible);
+}
+
+function sbStop() {
+  clearInterval(sbPoll);
+  document.removeEventListener('visibilitychange', onVisible);
+  if (state.rt) { state.sb.removeChannel(state.rt); state.rt = null; }
+}
+
+function sbSignedOut() {
+  sbStop();
+  state.cards = [];
+  state.cols = [];
+  state.loaded = { cols: false, cards: false };
+  state.gate = 'Entre para ver o quadro.';
+  $('#logout').hidden = true;
+  setNotice('');
+  render();
+  showAuth();
+}
+
+async function sbEnter(session) {
+  authMsg('Verificando acesso…');
+  const r = await state.sb.rpc('is_member');
+  if (r.error) {
+    authMsg('Não foi possível verificar o acesso. Tente de novo.', true);
+    showAuth();
+    return;
+  }
+  if (r.data !== true) {
+    authMsg('Este e-mail não tem acesso ao quadro.', true);
+    await state.sb.auth.signOut();
+    return;
+  }
+  authMsg('');
+  $('#auth').hidden = true;
+  state.gate = '';
+  $('#logout').hidden = false;
+  $('#logout').title = 'Sair (' + ((session && session.user && session.user.email) || '') + ')';
+  sbStart();
+}
+
+function wireAuth() {
+  $('#authForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = $('#aEmail').value.trim();
+    const password = $('#aPass').value;
+    if (!email || !password) { authMsg('Preencha o e-mail e a senha.', true); return; }
+    $('#aSubmit').disabled = true;
+    authMsg('Entrando…');
+    const r = await state.sb.auth.signInWithPassword({ email, password });
+    $('#aSubmit').disabled = false;
+    if (r.error || !r.data || !r.data.session) { authMsg('E-mail ou senha incorretos.', true); return; }
+    $('#aPass').value = '';
+    sbEnter(r.data.session);
+  });
+  $('#logout').addEventListener('click', () => state.sb.auth.signOut());
+}
+
+async function sbBoot() {
+  state.sb = window.supabase.createClient(window.SB_CFG.url, window.SB_CFG.key);
+  state.mode = 'sb';
+  state.gate = 'Entre para ver o quadro.';
+  wireAuth();
+  render();
+  state.sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_OUT') sbSignedOut(); });
+  const { data } = await state.sb.auth.getSession();
+  if (data && data.session) sbEnter(data.session); else showAuth();
+}
 /* ---------- Eventos fixos e arranque ---------- */
 function wireUI() {
   $('#q').addEventListener('input', (e) => { state.q = e.target.value; render(); });
@@ -892,7 +1058,7 @@ function startLocal() {
   }
   state.loaded = { cols: true, cards: true };
   $('#boardTitle').value = state.title;
-  setNotice('As alterações ficam salvas só neste navegador. Para a equipe enxergar o mesmo quadro, falta ligar um banco de dados online.');
+  setNotice('Esta é uma cópia só sua: as alterações ficam neste navegador e a equipe não vê. Abra o quadro pelo link do artefato, com a sua conta, para trabalharem juntos.');
   render();
 }
 
@@ -933,6 +1099,7 @@ function startDb() {
 async function init() {
   wireUI();
   render();
+  if (sbAvailable()) { sbBoot(); return; }
   const [db, user] = await Promise.all([use('db'), use('user')]);
   state.user = user;
   if (user) {
