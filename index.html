@@ -812,6 +812,24 @@ button.cal-day:hover{background:var(--hover)}
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
+<script>
+/* App Android: dentro do APK existe window.TarefasApp. Aqui o aviso de prazo vira notificação do celular. No navegador nada muda. */
+(function () {
+  var A = window.TarefasApp;
+  if (!A || !A.notify) return;
+  var asked = function () { try { return localStorage.getItem('app:notif') === 'no'; } catch (e) { return false; } };
+  function N(title, opts) { try { A.notify(String(title || ''), String((opts && opts.body) || '')); } catch (e) { /* sem notificação */ } }
+  Object.defineProperty(N, 'permission', { get: function () { return A.notificationsAllowed() ? 'granted' : (asked() ? 'denied' : 'default'); } });
+  N.requestPermission = function () {
+    return new Promise(function (ok) {
+      if (A.notificationsAllowed()) return ok('granted');
+      window.__notifRes = function (r) { try { localStorage.setItem('app:notif', r === 'granted' ? 'yes' : 'no'); } catch (e) { /* ok */ } ok(r); };
+      A.requestNotificationPermission();
+    });
+  };
+  window.Notification = N;
+})();
+</script>
 <script src="supabase.js"></script>
 <script>window.SB_CFG={url:"https://shhixiyzvqgvzrtxsgps.supabase.co",key:"sb_publishable_kr1vG-1LOjiY0WtyXIJn-Q_a6-eqJqk"}</script>
 <script>
@@ -1578,7 +1596,7 @@ function inkFor(hex) {
 function applyPrefs() {
   const p = state.prefs;
   const root = document.documentElement;
-  if (p.theme === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', p.theme);
+  if (p.theme === 'auto') { if (window.TarefasApp && TarefasApp.isDark) root.setAttribute('data-theme', TarefasApp.isDark() ? 'dark' : 'light'); else root.removeAttribute('data-theme'); } else root.setAttribute('data-theme', p.theme);
   if (p.color) { root.style.setProperty('--aqua', p.color); root.style.setProperty('--aqua-ink', inkFor(p.color)); }
   else { root.style.removeProperty('--aqua'); root.style.removeProperty('--aqua-ink'); }
   const tc = document.querySelector('meta[name="theme-color"]');
@@ -1589,6 +1607,19 @@ function applyPrefs() {
   root.style.setProperty('--fs', String(SIZES[p.size]));
   root.style.setProperty('--colw', WIDES[p.wide] + 'px');
   root.dataset.density = p.dens;
+  if (window.TarefasApp && TarefasApp.setBars) {
+    setTimeout(() => {
+      /* a cor do fundo é definida em oklch; o canvas converte para RGB. Se não conseguir, usa as cores fixas de cada tema. */
+      let hex = root.getAttribute('data-theme') === 'dark' ? '#0A1415' : '#EDF3F1';
+      try {
+        const g = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+        g.canvas.width = g.canvas.height = 1; g.fillStyle = '#010203'; g.fillStyle = getComputedStyle(document.body).backgroundColor;
+        if (g.fillStyle !== '#010203') { g.fillRect(0, 0, 1, 1); const d = g.getImageData(0, 0, 1, 1).data; if (d[3] === 255) hex = '#' + [d[0], d[1], d[2]].map((n) => n.toString(16).padStart(2, '0')).join(''); }
+      } catch (e) { /* usa a cor fixa */ }
+      const v = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+      TarefasApp.setBars(hex, (v[0] * 299 + v[1] * 587 + v[2] * 114) / 1000 < 128);
+    }, 30);
+  }
 }
 
 function setPref(k, v) {
@@ -3229,6 +3260,22 @@ function wireUI() {
       openCard();
     }
   });
+  /* Botão voltar do Android: fecha o que estiver aberto, depois volta ao Início; no Início, sai do app. */
+  window.onBack = function () {
+    if (!$('#auth').hidden) return false;
+    if (cd && cd.on) { calCancel(); return true; }
+    if (cdrag || cpress) { colCancel(); return true; }
+    if (state.drag) { onCancel(); return true; }
+    if (document.querySelector('.menu')) { closeMenus(); return true; }
+    if (!$('#mgScrim').hidden) { closeMg(); return true; }
+    if (!$('#setScrim').hidden) { closeSettings(); return true; }
+    if (!$('#scrim').hidden) { closeCard(); return true; }
+    if (!$('#alertPop').hidden) { toggleAlert(false); return true; }
+    if (!$('#fPop').hidden) { togglePop(false); return true; }
+    if (state.cal.open && !state.cal.docked) { calClose(); return true; }
+    if (state.view !== 'inicio') { setView('inicio'); return true; }
+    return false;
+  };
   wireSettings();
   wireFab();
 }

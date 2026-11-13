@@ -1,0 +1,51 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.savepoint.quadro'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.savepoint.quadro'
+        minSdk 23
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    // A chave de assinatura nunca fica no repositório: o GitHub entrega por segredo (variáveis de ambiente).
+    // Sem as variáveis (build local, por exemplo), assina com a chave de debug do Android Studio.
+    def ksFile = System.getenv('KEYSTORE_FILE')
+    signingConfigs {
+        if (ksFile) {
+            quadro {
+                storeFile file(ksFile)
+                storePassword System.getenv('KEYSTORE_PASSWORD')
+                keyAlias System.getenv('KEY_ALIAS')
+                keyPassword System.getenv('KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (ksFile) {
+                signingConfig signingConfigs.quadro
+            } else {
+                signingConfig signingConfigs.debug
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}

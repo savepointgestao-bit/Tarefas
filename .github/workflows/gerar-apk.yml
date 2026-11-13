@@ -1,0 +1,67 @@
+name: Gerar APK
+
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'supabase.js'
+      - 'favicon*'
+      - 'apple-touch-icon.png'
+      - 'android/**'
+      - '.github/workflows/gerar-apk.yml'
+  workflow_dispatch:
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.7
+
+      - name: Copiar o site para dentro do app
+        run: |
+          mkdir -p android/app/src/main/assets
+          cp index.html supabase.js favicon.svg favicon-32.png favicon.ico apple-touch-icon.png android/app/src/main/assets/
+
+      - name: Preparar a chave de assinatura
+        id: chave
+        env:
+          KS_B64: ${{ secrets.KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
+          KS_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -n "$KS_B64" ] && [ -n "$KS_PASS" ] && [ -n "$KS_ALIAS" ] && [ -n "$KEY_PASS" ]; then
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/quadro.keystore"
+            echo "KEYSTORE_FILE=$RUNNER_TEMP/quadro.keystore" >> "$GITHUB_ENV"
+            echo "KEYSTORE_PASSWORD=$KS_PASS" >> "$GITHUB_ENV"
+            echo "KEY_ALIAS=$KS_ALIAS" >> "$GITHUB_ENV"
+            echo "KEY_PASSWORD=$KEY_PASS" >> "$GITHUB_ENV"
+            echo "nome=quadro-apk" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Segredos da chave não encontrados. Este APK usa uma chave temporária e não instala por cima de outro build. Cadastre os 4 segredos e rode de novo."
+            keytool -genkeypair -keystore "$RUNNER_TEMP/temp.keystore" -storepass temp-12345 -keypass temp-12345 -alias temp -keyalg RSA -keysize 2048 -validity 3650 -dname "CN=Quadro temporario"
+            echo "KEYSTORE_FILE=$RUNNER_TEMP/temp.keystore" >> "$GITHUB_ENV"
+            echo "KEYSTORE_PASSWORD=temp-12345" >> "$GITHUB_ENV"
+            echo "KEY_ALIAS=temp" >> "$GITHUB_ENV"
+            echo "KEY_PASSWORD=temp-12345" >> "$GITHUB_ENV"
+            echo "nome=quadro-apk-chave-temporaria" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Compilar APK
+        working-directory: android
+        run: gradle assembleRelease --no-daemon
+
+      - name: Nomear o arquivo
+        run: cp android/app/build/outputs/apk/release/app-release.apk Quadro.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.chave.outputs.nome }}
+          path: Quadro.apk
