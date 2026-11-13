@@ -22,7 +22,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 /**
- * Casca do Quadro da Equipe: uma WebView que abre o site (index.html) empacotado dentro do app.
+ * Casca do app Tarefas: uma WebView que abre o site (index.html) empacotado dentro do app.
  * Os dados ficam na nuvem (Supabase), como no site. A ponte "TarefasApp" liga o aviso de prazo
  * às notificações do celular, informa o tema do sistema e pinta a barra de status.
  */

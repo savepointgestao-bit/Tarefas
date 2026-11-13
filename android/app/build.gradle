@@ -10,8 +10,8 @@ android {
         applicationId 'com.savepoint.quadro'
         minSdk 23
         targetSdk 34
-        versionCode 1
-        versionName '1.0'
+        versionCode 2
+        versionName '1.1'
     }
 
     // A chave de assinatura nunca fica no repositório: o GitHub entrega por segredo (variáveis de ambiente).
@@ -19,7 +19,7 @@ android {
     def ksFile = System.getenv('KEYSTORE_FILE')
     signingConfigs {
         if (ksFile) {
-            quadro {
+            tarefas {
                 storeFile file(ksFile)
                 storePassword System.getenv('KEYSTORE_PASSWORD')
                 keyAlias System.getenv('KEY_ALIAS')
@@ -32,7 +32,7 @@ android {
         release {
             minifyEnabled false
             if (ksFile) {
-                signingConfig signingConfigs.quadro
+                signingConfig signingConfigs.tarefas
             } else {
                 signingConfig signingConfigs.debug
             }

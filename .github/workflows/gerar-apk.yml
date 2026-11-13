@@ -38,20 +38,20 @@ jobs:
           KEY_PASS: ${{ secrets.KEY_PASSWORD }}
         run: |
           if [ -n "$KS_B64" ] && [ -n "$KS_PASS" ] && [ -n "$KS_ALIAS" ] && [ -n "$KEY_PASS" ]; then
-            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/quadro.keystore"
-            echo "KEYSTORE_FILE=$RUNNER_TEMP/quadro.keystore" >> "$GITHUB_ENV"
+            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/tarefas.keystore"
+            echo "KEYSTORE_FILE=$RUNNER_TEMP/tarefas.keystore" >> "$GITHUB_ENV"
             echo "KEYSTORE_PASSWORD=$KS_PASS" >> "$GITHUB_ENV"
             echo "KEY_ALIAS=$KS_ALIAS" >> "$GITHUB_ENV"
             echo "KEY_PASSWORD=$KEY_PASS" >> "$GITHUB_ENV"
-            echo "nome=quadro-apk" >> "$GITHUB_OUTPUT"
+            echo "nome=tarefas-apk" >> "$GITHUB_OUTPUT"
           else
             echo "::warning::Segredos da chave não encontrados. Este APK usa uma chave temporária e não instala por cima de outro build. Cadastre os 4 segredos e rode de novo."
-            keytool -genkeypair -keystore "$RUNNER_TEMP/temp.keystore" -storepass temp-12345 -keypass temp-12345 -alias temp -keyalg RSA -keysize 2048 -validity 3650 -dname "CN=Quadro temporario"
+            keytool -genkeypair -keystore "$RUNNER_TEMP/temp.keystore" -storepass temp-12345 -keypass temp-12345 -alias temp -keyalg RSA -keysize 2048 -validity 3650 -dname "CN=Tarefas temporario"
             echo "KEYSTORE_FILE=$RUNNER_TEMP/temp.keystore" >> "$GITHUB_ENV"
             echo "KEYSTORE_PASSWORD=temp-12345" >> "$GITHUB_ENV"
             echo "KEY_ALIAS=temp" >> "$GITHUB_ENV"
             echo "KEY_PASSWORD=temp-12345" >> "$GITHUB_ENV"
-            echo "nome=quadro-apk-chave-temporaria" >> "$GITHUB_OUTPUT"
+            echo "nome=tarefas-apk-chave-temporaria" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Compilar APK
@@ -59,9 +59,9 @@ jobs:
         run: gradle assembleRelease --no-daemon
 
       - name: Nomear o arquivo
-        run: cp android/app/build/outputs/apk/release/app-release.apk Quadro.apk
+        run: cp android/app/build/outputs/apk/release/app-release.apk Tarefas.apk
 
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.chave.outputs.nome }}
-          path: Quadro.apk
+          path: Tarefas.apk

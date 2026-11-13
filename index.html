@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Quadro da Equipe</title>
+<title>Tarefas</title>
 <meta name="theme-color" content="#37C9B3">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
@@ -635,13 +635,13 @@ button.cal-day:hover{background:var(--hover)}
 .ghost-colwin{position:fixed;left:0;top:0;z-index:80;margin:0;pointer-events:none;opacity:.96;box-shadow:0 0 0 1.5px var(--aqua),0 24px 50px color-mix(in srgb,var(--shadow) 34%,transparent)}
 .col-line{position:fixed;z-index:70;width:4px;border-radius:2px;background:var(--aqua);pointer-events:none}
 .logo{width:40px;height:40px;flex:none;border-radius:11px}
-.brandpanel{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:18px 20px;border-radius:16px;background:#17624F;color:#fff}
-.brandpanel .smark{width:28px;height:46px;flex:none}
+.brandpanel{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:18px 20px;border-radius:16px;background:#0B2B28;color:#fff}
+.brandpanel .tmark{width:46px;height:46px;flex:none}
 .brandpanel .wm{font:500 42px/1 'Outfit',var(--display),sans-serif;letter-spacing:-.01em}
-.brandpanel small{flex-basis:100%;color:#8EDBBA;font-size:14px;letter-spacing:.03em}
-.awrap{position:relative}.awrap #alertBtn{position:relative}
+.brandpanel small{flex-basis:100%;color:#7FDCCB;font-size:14px;letter-spacing:.03em}
+.awrap{position:static}.awrap #alertBtn{position:relative}
 .badge.late{background:var(--bad);color:#fff}
-#alertPop{width:min(380px,calc(100vw - 24px))}
+#alertPop{left:auto;right:var(--gr);top:calc(100% + 4px);width:min(380px,calc(100vw - 32px))}
 .rsv-big{font:700 calc(26px * var(--fs,1)) var(--display)}
 .frow.static{cursor:default}.frow.static:hover{box-shadow:none}
 .ftiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}
@@ -671,6 +671,62 @@ button.cal-day:hover{background:var(--hover)}
 .fb small{color:var(--muted);font-size:11px;text-transform:capitalize}
 .ff{display:grid;gap:6px}.ff2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .frm{display:grid;gap:14px}.fact{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap}
+/* ===== Visual: avisos, listas e celular ===== */
+:root{--navh:0px}
+.list{grid-template-columns:minmax(0,1fr)}
+.rowitem{min-width:0;max-width:100%;align-items:flex-start;padding:10px 12px}
+.rowitem .dot{margin-top:6px}
+.rowitem .ar-t{display:grid;gap:2px;white-space:normal;overflow:visible;text-overflow:clip}
+.rowitem .ar-t>b{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+.rowitem .ar-t small,.rowitem .rmeta{font-size:calc(12px * var(--fs,1));color:var(--muted)}
+.rowitem .ar-t small.mt.late{color:var(--bad);font-weight:600}
+.rmeta{display:flex;flex-wrap:wrap;gap:1px 10px}
+.rmeta .mt.late{color:var(--bad);font-weight:600}
+.pop .ph{display:flex;align-items:center;gap:8px;margin:-4px -6px -4px 0}
+.pop .ph b{flex:1;min-width:0;font:700 calc(15px * var(--fs,1))/1.3 var(--display)}
+.pcount{padding:2px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:calc(12px * var(--fs,1));font-weight:700;white-space:nowrap}
+.pcount.late{background:var(--bad-soft);color:var(--bad)}
+.alist{max-height:min(44dvh,340px);overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
+.okmsg{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--ok-soft);color:var(--ok);font-weight:600}
+.nbox{padding-top:12px;border-top:1px solid var(--line)}
+.nbox .btn{justify-self:start}
+.btn.sm .ico{width:16px;height:16px}
+.pop .btn{width:auto;padding:0 12px}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.brandpanel .tmark{display:block}
+@media (max-width:760px){
+  :root{--navh:60px;--navt:calc(var(--navh) + env(safe-area-inset-bottom,0px));--gl:max(16px,env(safe-area-inset-left,0px));--gr:max(16px,env(safe-area-inset-right,0px))}
+  .top{padding-top:max(10px,env(safe-area-inset-top,0px));padding-bottom:8px;gap:8px 10px}
+  .brand{flex:1 1 100%}
+  .title{font-size:calc(20px * var(--fs,1))}
+  .prog .long{display:inline}
+  .track{flex-basis:96px}
+  .tools{flex:1 1 100%;justify-content:flex-end;gap:6px}
+  .tools .btn,.tools .icon-btn{width:38px;height:38px;padding:0}
+  .search input{height:38px}
+  .tools .pop .btn{width:auto;padding:0 12px}
+  .fwrap,.awrap{position:static}
+  .pop{left:var(--gl);right:var(--gr);top:calc(100% + 2px);width:auto;max-height:calc(100dvh - var(--navt) - 150px);overflow-y:auto;overscroll-behavior:contain}
+  #alertPop,#fPop{left:var(--gl);right:var(--gr);width:auto}
+  .alist{max-height:min(30dvh,250px)}
+  /* barra de abas embaixo, como em app de celular */
+  .tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;justify-content:space-around;gap:2px;padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px));border-radius:0;
+    background:var(--card);box-shadow:0 -1px 0 var(--line),0 -10px 28px color-mix(in srgb,var(--shadow) 9%,transparent)}
+  .tab{flex:1 1 0;flex-direction:column;justify-content:center;gap:2px;width:auto;height:48px;padding:0 4px;border-radius:12px}
+  .tab .ico{width:21px;height:21px}
+  .tab .lbl{display:block;font-size:calc(11px * var(--fs,1));font-weight:600;line-height:1}
+  .tab[aria-selected="true"]{background:var(--accent-soft);color:var(--accent);box-shadow:none}
+  body:has(input:focus,textarea:focus,select:focus) .tabs{display:none}
+  .board{padding-bottom:calc(var(--gb) + var(--navt))}
+  .view,.org{padding-bottom:calc(40px + var(--navt))}
+  .toast{bottom:calc(var(--navt) + 12px)}
+  .frow{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:2px 10px}
+  .frow .cdone{grid-column:1;grid-row:1}
+  .frow>.dot{grid-column:2;grid-row:1}
+  .frow .fd{grid-column:3;grid-row:1}
+  .frow .fv{grid-column:4;grid-row:1;justify-self:end}
+  .frow .tag{grid-column:3/-1;grid-row:2;justify-self:start}
+}
 </style>
 
 </head>
@@ -696,15 +752,14 @@ button.cal-day:hover{background:var(--hover)}
   <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11 12 4l8 7M6 9.5V20h12V9.5M10 20v-5h4v5"/></symbol>
   <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 21V4M6 5h11l-2 4 2 4H6"/></symbol>
   <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M14.5 9.2c-.4-.8-1.4-1.2-2.5-1.2-1.4 0-2.5.7-2.5 1.8s1 1.5 2.5 1.8 2.5.7 2.5 1.8-1.1 1.8-2.5 1.8c-1.1 0-2.1-.4-2.5-1.2M12 6.5V8m0 8v1.5"/></symbol>
-  <symbol id="s-mark" viewBox="10 -4 80 132"><g fill="none" stroke-width="22"><path d="M76.9 37.35A27 27 0 1 0 50 62" stroke="var(--s1,#17624F)"/><path d="M50 62A27 27 0 1 1 23.1 91.35" stroke="var(--s2,#3FA37F)"/></g><circle cx="76.9" cy="37.35" r="11" fill="var(--s1,#17624F)"/><circle cx="23.1" cy="91.35" r="11" fill="var(--s2,#3FA37F)"/></symbol>
   <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9M10 20a2 2 0 0 0 4 0"/></symbol>
 </defs></svg>
 
 <header class="top">
   <div class="brand">
-    <svg class="logo" viewBox="0 0 100 100" role="img" aria-label="Senso"><rect width="100" height="100" rx="24" fill="#17624F"/><use href="#s-mark" x="31" y="18" width="38" height="64" style="--s1:#fff;--s2:#8EDBBA"/></svg>
+    <svg class="logo" viewBox="0 0 100 100" role="img" aria-label="Tarefas"><rect width="100" height="100" rx="24" fill="#0B2B28"/><g fill="none" stroke-width="20" stroke-linecap="round"><path d="M21 53Q34 57 41 73" stroke="#FFB547"/><path d="M41 73Q54 38 80 24" stroke="#37C9B3"/></g></svg>
     <div class="ttl">
-      <input id="boardTitle" class="title" aria-label="Nome da equipe" maxlength="60" value="Quadro da Equipe">
+      <input id="boardTitle" class="title" aria-label="Nome da equipe" maxlength="60" value="Tarefas da Equipe">
       <div id="prog" class="prog" role="progressbar" aria-label="Cartões concluídos" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
         <span class="track"><i id="barFill"></i></span>
         <span id="stat" class="stat"></span>
@@ -799,8 +854,8 @@ button.cal-day:hover{background:var(--hover)}
 </div>
 
 <div id="auth" class="scrim auth" hidden>
-  <form id="authForm" class="sheet authbox" aria-label="Entrar no quadro" novalidate>
-    <div class="brandpanel"><svg class="smark" viewBox="10 -4 80 132" aria-hidden="true" style="--s1:#fff;--s2:#8EDBBA"><use href="#s-mark"/></svg><span class="wm">senso</span><small>gestão para psicólogos</small></div>
+  <form id="authForm" class="sheet authbox" aria-label="Entrar no Tarefas" novalidate>
+    <div class="brandpanel"><svg class="tmark" viewBox="8 8 84 84" aria-hidden="true"><g fill="none" stroke-width="20" stroke-linecap="round"><path d="M21 53Q34 57 41 73" stroke="#FFB547"/><path d="M41 73Q54 38 80 24" stroke="#37C9B3"/></g></svg><span class="wm">tarefas</span><small>tarefas e finanças da equipe</small></div>
     <div>
       <h2 class="authtitle">Entrar</h2>
       <p id="authMsg" class="authmsg" role="status"></p>
@@ -889,7 +944,7 @@ function ico(name, cls) {
 const avatar = (m) => h('span', { class: 'av', style: '--ac:' + m.color, title: m.name }, m.short);
 
 const state = {
-  cols: [], cards: [], title: 'Quadro da Equipe', view: 'quadro',
+  cols: [], cards: [], title: 'Tarefas da Equipe', view: 'quadro',
   q: '', fWho: '', fPrio: '', fLabel: '',
   loaded: { cols: false, cards: false }, error: '',
   db: null, sb: null, rt: null, gate: '', user: null, meId: null, canWrite: true, mode: 'local',
@@ -2403,11 +2458,13 @@ const openCardsList = () => state.cards.filter((c) => !isDone(c));
 const urgentList = () => { const t = todayStr(); return openCardsList().filter((c) => c.priority === 'alta' || (c.due && c.due <= t)).sort((a, b) => (a.due || '9') < (b.due || '9') ? -1 : 1); };
 function cardRow(c) {
   const col = state.cols.find((x) => x.id === c.col), late = c.due && c.due < todayStr() && !isDone(c);
-  return h('button', { type: 'button', class: 'rowitem', onclick: () => openCard(c.id) },
-    h('i', { class: 'dot', style: '--dc:' + (col ? colColor(col) : 'var(--faint)') }), h('span', { class: 'grow' }, c.title),
+  const meta = [
     ex.boards.length > 1 && col && h('span', { class: 'mt' }, (ex.boards.find((b) => b.id === bid(col)) || {}).name),
     c.priority === 'alta' && h('span', { class: 'mt p p-alta' }, 'Alta'),
-    c.due && h('span', { class: 'mt' + (late ? ' late' : '') }, ico('cal'), dueText(c.due)));
+    c.due && h('span', { class: 'mt' + (late ? ' late' : '') }, ico('cal'), dueText(c.due))].filter(Boolean);
+  return h('button', { type: 'button', class: 'rowitem', onclick: () => openCard(c.id) },
+    h('i', { class: 'dot', style: '--dc:' + (col ? colColor(col) : 'var(--faint)') }),
+    h('span', { class: 'grow ar-t' }, h('b', null, c.title), meta.length ? h('span', { class: 'rmeta' }, meta) : null));
 }
 const goalBar = (g) => h('div', { class: 'list' }, h('div', { class: 'wh' }, h('b', { style: 'flex:1' }, g.t || 'Sem título'), h('span', { class: 'plabel' }, (g.p || 0) + '%')), h('span', { class: 'bar' }, h('i', { style: 'width:' + (g.p || 0) + '%' })));
 
@@ -2781,26 +2838,31 @@ function alertRow(it) {
   const n = daysFrom(it.date);
   const when = it.lvl === 'late' ? 'Atrasado' : it.lvl === 'today' ? 'Vence hoje' : n === 1 ? 'Vence amanhã' : 'Vence em ' + n + ' dias';
   const tag = it.kind === 'card' ? 'Cartão' : it.type === 'in' ? 'A receber' : 'A pagar';
-  return h('button', { type: 'button', class: 'rowitem', onclick: () => {
+  return h('button', { type: 'button', class: 'rowitem alertrow ' + it.lvl, onclick: () => {
     toggleAlert(false);
     if (it.kind === 'card') openCard(it.id);
     else { setView('financas'); const f = ex.fin.items.find((x) => x.id === it.id); if (f) openMg(finForm(f)); }
   } }, h('i', { class: 'dot', style: '--dc:' + (it.lvl === 'late' ? 'var(--bad)' : it.lvl === 'today' ? 'var(--warn)' : 'var(--aqua)') }),
-  h('span', { class: 'grow' }, it.title), h('span', { class: 'mt' + (it.lvl === 'late' ? ' late' : '') }, when + ' · ' + tag));
+  h('span', { class: 'grow ar-t' }, h('b', null, it.title), h('small', { class: 'mt' + (it.lvl === 'late' ? ' late' : '') }, when + ' · ' + tag)));
 }
 function renderAlertPop() {
   const items = alertItems(), can = 'Notification' in window, perm = can ? Notification.permission : 'denied', on = ex.alert.browser && perm === 'granted';
+  const late = items.filter((i) => i.lvl === 'late').length;
   fill($('#alertPop'),
+    h('div', { class: 'ph' },
+      h('b', null, 'Avisos de prazo'),
+      items.length ? h('span', { class: 'pcount' + (late ? ' late' : '') }, late ? late + (late === 1 ? ' atrasado' : ' atrasados') : items.length + (items.length === 1 ? ' aviso' : ' avisos')) : null,
+      h('button', { type: 'button', class: 'icon-btn sm', 'aria-label': 'Fechar', onclick: () => toggleAlert(false) }, ico('x'))),
     h('div', { class: 'fgroup' }, h('span', { class: 'flabel' }, 'Avisar com antecedência de'),
       h('div', { class: 'chips' }, [[0, 'Só no dia'], [1, '1 dia'], [2, '2 dias'], [3, '3 dias'], [7, '1 semana']].map(([n, l]) => h('button', { type: 'button', class: 'fc', 'aria-pressed': ex.alert.days === n ? 'true' : 'false', onclick: () => { ex.alert.days = n; exSave(); } }, l)))),
-    items.length ? h('div', { class: 'list', style: 'max-height:46vh;overflow:auto' }, items.map(alertRow)) : h('p', { class: 'empty' }, 'Nenhum prazo chegando. Tudo em dia.'),
-    can && h('div', { class: 'fgroup' },
-      h('button', { type: 'button', class: 'btn sm', disabled: perm === 'denied', 'aria-pressed': on ? 'true' : 'false', onclick: async () => {
+    items.length ? h('div', { class: 'list alist' }, items.map(alertRow)) : h('p', { class: 'empty okmsg' }, ico('check'), 'Nenhum prazo chegando. Tudo em dia.'),
+    can && h('div', { class: 'fgroup nbox' },
+      h('button', { type: 'button', class: 'btn sm' + (on ? ' on' : ''), disabled: perm === 'denied', 'aria-pressed': on ? 'true' : 'false', onclick: async () => {
         if (on) { ex.alert.browser = false; exSave(); return; }
         try { const r = perm === 'granted' ? 'granted' : await Notification.requestPermission(); ex.alert.browser = r === 'granted'; ex.alert.last = ''; exSave(); if (r === 'granted') alertNotify(true); }
-        catch (e) { toast('Este navegador não permite notificações aqui'); }
-      } }, perm === 'denied' ? 'Notificações bloqueadas no navegador' : on ? 'Notificações do navegador: ligadas' : 'Ativar notificações do navegador'),
-      h('span', { class: 'flabel' }, 'Os avisos chegam enquanto o app estiver aberto.')));
+        catch (e) { toast('Não foi possível ativar as notificações aqui'); }
+      } }, ico('bell'), perm === 'denied' ? 'Notificações bloqueadas' : on ? 'Notificações ligadas' : 'Ativar notificações'),
+      h('span', { class: 'flabel' }, perm === 'denied' ? 'Libere nas configurações do aparelho. Os avisos chegam enquanto o app estiver aberto.' : 'Os avisos chegam enquanto o app estiver aberto.')));
 }
 function renderAlertBadge() {
   const items = alertItems(), b = $('#alertCount');
@@ -2825,7 +2887,7 @@ function alertNotify(force) {
   ex.alert.last = t; exSave();
   const late = items.filter((i) => i.lvl === 'late').length, today = items.filter((i) => i.lvl === 'today').length, soon = items.length - late - today;
   const body = [late && late + ' atrasado(s)', today && today + ' vence(m) hoje', soon && soon + ' nos próximos dias'].filter(Boolean).join(' · ');
-  try { new Notification('Senso: avisos de prazo', { body }); } catch (e) { /* sem permissão */ }
+  try { new Notification('Tarefas: avisos de prazo', { body }); } catch (e) { /* sem permissão */ }
 }
 
 /* ================= Adicionar rápido, mover entre quadros e reorganizar listas ================= */
@@ -2951,7 +3013,7 @@ const fab = { rx: 1, ry: 1, drag: null, moved: false, inset: { t: 0, r: 0, b: 0,
 const clamp01 = (n) => Math.min(1, Math.max(0, n));
 
 function fabInsets() {
-  const p = h('div', { style: 'position:fixed;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)' });
+  const p = h('div', { style: 'position:fixed;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) calc(env(safe-area-inset-bottom,0px) + var(--navh,0px)) env(safe-area-inset-left,0px)' });
   document.body.append(p);
   const s = getComputedStyle(p);
   fab.inset = { t: parseFloat(s.paddingTop) || 0, r: parseFloat(s.paddingRight) || 0, b: parseFloat(s.paddingBottom) || 0, l: parseFloat(s.paddingLeft) || 0 };
@@ -3081,7 +3143,7 @@ async function sbLoad(which) {
       jobs.push(sb.from('quadro').select('id,data').in('id', [1, 2]).then(sbOk).then((r) => {
         const rows = r.data || [];
         const r1 = rows.find((x) => x.id === 1), r2 = rows.find((x) => x.id === 2);
-        const t = r1 && r1.data && r1.data.title;
+        const t0 = r1 && r1.data && r1.data.title, t = t0 === 'Quadro da Equipe' ? 'Tarefas da Equipe' : t0;
         if (t) {
           state.title = t;
           const el = $('#boardTitle');
@@ -3211,7 +3273,7 @@ function wireUI() {
   const bt = $('#boardTitle');
   bt.addEventListener('input', fitBoardTitle);
   bt.addEventListener('change', () => {
-    const v = bt.value.trim() || 'Quadro da Equipe';
+    const v = bt.value.trim() || 'Tarefas da Equipe';
     bt.value = v;
     saveTitle(v);
   });
