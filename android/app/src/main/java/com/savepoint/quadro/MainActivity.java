@@ -22,7 +22,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 /**
- * Casca do app Tarefas: uma WebView que abre o site (index.html) empacotado dentro do app.
+ * Casca do app SBase: uma WebView que abre o site (index.html) empacotado dentro do app.
  * Os dados ficam na nuvem (Supabase), como no site. A ponte "TarefasApp" liga o aviso de prazo
  * às notificações do celular, informa o tema do sistema e pinta a barra de status.
  */
@@ -30,6 +30,8 @@ public class MainActivity extends Activity {
     private WebView web;
     private static final String CHANNEL = "prazos";
     private static final int REQ_NOTIF = 7;
+    private static final int REQ_FILE = 8;
+    private ValueCallback<Uri[]> fileCb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,21 @@ public class MainActivity extends Activity {
                 return true;
             }
         });
-        web.setWebChromeClient(new WebChromeClient());
+        // Anexos e importação de backup usam o seletor de arquivos do celular
+        web.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onShowFileChooser(WebView w, ValueCallback<Uri[]> cb, FileChooserParams params) {
+                if (fileCb != null) fileCb.onReceiveValue(null);
+                fileCb = cb;
+                try {
+                    startActivityForResult(params.createIntent(), REQ_FILE);
+                } catch (Exception e) {
+                    fileCb = null;
+                    return false;
+                }
+                return true;
+            }
+        });
         web.addJavascriptInterface(new Bridge(), "TarefasApp");
         int bg = Color.parseColor(isDarkMode() ? "#0d1715" : "#ebf7f4");
         web.setBackgroundColor(bg);
@@ -182,6 +198,18 @@ public class MainActivity extends Activity {
                     .setAutoCancel(true);
             nm.notify(1, b.build());
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQ_FILE) {
+            if (fileCb != null) {
+                fileCb.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
+                fileCb = null;
+            }
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

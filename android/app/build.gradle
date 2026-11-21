@@ -10,8 +10,8 @@ android {
         applicationId 'com.savepoint.quadro'
         minSdk 23
         targetSdk 34
-        versionCode 3
-        versionName '1.2'
+        versionCode 4
+        versionName '1.3'
     }
 
     // A chave de assinatura nunca fica no repositório: o GitHub entrega por segredo (variáveis de ambiente).
