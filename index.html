@@ -662,7 +662,7 @@ button.cal-day:hover{background:var(--hover)}
 .tile2 .x{position:absolute;top:6px;right:6px}
 .tile2 .field{background:var(--card);font-weight:600}.tile2 .m-desc{background:var(--card);min-height:56px}
 .tile2 .cf>.field:first-child{padding-right:34px}
-.num{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--aqua);color:var(--aqua-ink);font-weight:700}
+.tile2>.num{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--aqua);color:var(--aqua-ink);font-weight:700}
 .pctbig{font:700 calc(24px * var(--fs,1)) var(--display)}
 .w .cojoin span{background:var(--card)}
 .org-wrap{overflow-x:auto;padding:6px 0}
@@ -2618,7 +2618,8 @@ function renderHome() {
 /* ----- Empresa: identidade, equipe (organograma), valores, objetivos ----- */
 const ti = (o, k, ph) => h('input', { class: 'field', maxlength: 100, placeholder: ph, value: o[k] || '', disabled: !state.canWrite, 'aria-label': ph, onchange: (e) => { o[k] = e.target.value.trim(); exSave(); } });
 const ta = (o, k, ph, rows) => h('textarea', { class: 'm-desc', rows: rows || 2, maxlength: 800, placeholder: ph, disabled: !state.canWrite, 'aria-label': ph, onchange: (e) => { o[k] = e.target.value.trim(); exSave(); } }, o[k] || '');
-const big = (k, ph) => h('textarea', { class: 'bigta', maxlength: 800, placeholder: ph, disabled: !state.canWrite, 'aria-label': ph, onchange: (e) => { ex.company[k] = e.target.value.trim(); exSave(); } }, ex.company[k] || '');
+const growTa = (t) => { t.style.height = 'auto'; if (t.scrollHeight > t.clientHeight + 1) t.style.height = t.scrollHeight + 'px'; };
+const big = (k, ph) => h('textarea', { class: 'bigta', maxlength: 800, placeholder: ph, disabled: !state.canWrite, 'aria-label': ph, oninput: (e) => growTa(e.target), onchange: (e) => { ex.company[k] = e.target.value.trim(); exSave(); } }, ex.company[k] || '');
 const block = (icon, eyebrow, title, right, ...kids) => h('section', { class: 'w l' },
   h('div', { class: 'wh' }, h('div', { style: 'flex:1;display:grid;gap:2px' }, h('span', { class: 'eyebrow' }, ico(icon), eyebrow), h('h3', { style: 'flex:none' }, title)), right), ...kids);
 function tileSec(key, icon, eyebrow, title, mk, row, hint, numbered) {
@@ -2646,6 +2647,7 @@ function renderCompany() {
           h('input', { type: 'date', class: 'field', value: g.due || '', disabled: !state.canWrite, 'aria-label': 'Prazo do objetivo', onchange: (e) => { g.due = e.target.value; exSave(); } })];
       }, 'Defina metas e acompanhe o progresso. Elas aparecem na tela inicial.'),
       tileSec('notes', 'text', 'Livre', 'Outras informações', () => ({ id: uid(), title: '', text: '' }), (n) => [ti(n, 'title', 'Título (ex.: Público-alvo, Metas do ano)'), ta(n, 'text', 'Conteúdo', 3)], 'Espaço livre para qualquer informação da empresa.')));
+  $('#company').querySelectorAll('.bigta').forEach(growTa);
   $('#company').scrollTop = st;
 }
 
