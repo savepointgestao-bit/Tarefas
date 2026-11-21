@@ -18,7 +18,7 @@ Sem os segredos o build ainda funciona, mas gera o artefato **sbase-apk-chave-te
 
 ## Celular
 
-- Os dados ficam na nuvem, como no site. Os ajustes locais (layout do Início, quadro atual, avisos) ficam só no aparelho.
+- Os dados ficam na nuvem, como no site. Cartões, colunas, quadros, etiquetas, Finanças, missão e objetivos sincronizam com a equipe. Só o layout do Início, o quadro aberto, os modelos e os avisos ficam no aparelho.
 - Avisos de prazo viram notificação do celular enquanto o app estiver aberto.
 - O botão voltar do Android fecha o que estiver aberto, volta ao Início e, no Início, sai do app.
 - O tema "Automático" segue o tema do celular.
@@ -33,4 +33,4 @@ O ícone é uma engrenagem com um S. No Android 13 ou mais novo, com "Ícones te
 
 ## Arquivos e backup
 
-Anexos e a importação de backup abrem o seletor de arquivos do celular. As Finanças e os ajustes de tela ficam salvos no aparelho, então vale baixar ou copiar um backup de vez em quando.
+Anexos e a importação de backup abrem o seletor de arquivos do celular. Os anexos vão para a pasta privada `anexos` do Supabase (até 10 MB por arquivo, só a equipe vê). Vale baixar ou copiar um backup das Finanças de vez em quando.

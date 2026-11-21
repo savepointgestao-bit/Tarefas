@@ -2285,6 +2285,83 @@ const WN = { calendario: 'Calendário', urgentes: 'Tarefas urgentes', objetivos:
 const SW = ['#D2412F', '#E07B2E', '#B57400', '#1E8A55', '#12806F', '#2175C3', '#4C6FD1', '#7C4DC4', '#C93F82', '#5E6B73'];
 const FIN_CATS_DEF = [{ k: 'vendas', n: 'Vendas', c: '#1E8A55' }, { k: 'servicos', n: 'Serviços', c: '#12806F' }, { k: 'assinaturas', n: 'Assinaturas', c: '#3FA37F' }, { k: 'salarios', n: 'Salários', c: '#2175C3' }, { k: 'prolabore', n: 'Pró-labore', c: '#4C6FD1' }, { k: 'aluguel', n: 'Aluguel', c: '#7C4DC4' }, { k: 'impostos', n: 'Impostos', c: '#D2412F' }, { k: 'contador', n: 'Contador', c: '#C93F82' }, { k: 'marketing', n: 'Marketing', c: '#E07B2E' }, { k: 'ferramentas', n: 'Ferramentas', c: '#B57400' }, { k: 'hospedagem', n: 'Hospedagem e servidores', c: '#12806F' }, { k: 'tarifas', n: 'Taxas e tarifas', c: '#8A5A44' }, { k: 'equipamentos', n: 'Equipamentos', c: '#5E6B73' }, { k: 'treinamento', n: 'Treinamento', c: '#2175C3' }, { k: 'viagens', n: 'Viagens', c: '#C98A1E' }, { k: 'reembolsos', n: 'Reembolsos', c: '#7C4DC4' }, { k: 'outros', n: 'Outros', c: '#5E6B73' }];
 const ex = { fin: { items: [], cats: FIN_CATS_DEF.map((c) => ({ ...c })), rules: [], reserve: { goal: 0, moves: [] }, accounts: [{ id: 'principal', n: 'Conta principal', init: 0 }], transfers: [], sectors: [{ k: 'juridico', n: 'Jurídico' }, { k: 'marketing', n: 'Marketing' }, { k: 'tecnologia', n: 'Tecnologia' }, { k: 'financeiro', n: 'Financeiro' }, { k: 'comercial', n: 'Comercial' }, { k: 'geral', n: 'Geral' }], budget: {}, goal: 0, tax: { on: false, label: 'Simples Nacional', mode: 'percent', rate: 0, fixed: 0, day: 20 } }, alert: { days: 1, browser: false, last: '' }, me: '', tpl: { cards: [], lists: [] }, fm: null, ff: 'all', fsub: 'resumo', fq: '', fcat: '', fsec: '', facc: '', rmode: 'mes', rpaid: false, fh: 6, boards: [{ id: 'principal', name: 'Principal' }], board: 'principal', company: { mission: '', vision: '', values: [], goals: [], notes: [] }, home: HOME_DEF.map((w) => ({ ...w })), ym: null, edit: false };
+/* Dados compartilhados com a equipe: etiquetas, quadros, missão, visão, valores, objetivos, notas e Finanças.
+   Com login, ficam no servidor, uma chave por vez. Sem login, só neste aparelho.
+   O desenho da tela inicial, o quadro aberto, os modelos, "quem sou eu" e os avisos de prazo são escolha de cada pessoa e ficam sempre neste aparelho. */
+const EX_SHARED = ['labels', 'boards', 'mission', 'vision', 'values', 'goals', 'notes', 'fincfg', 'finitems', 'finext'];
+const EX_TAX_DEF = () => ({ on: false, label: 'Simples Nacional', mode: 'percent', rate: 0, fixed: 0, day: 20 });
+const EX_SECTORS_DEF = () => [{ k: 'juridico', n: 'Jurídico' }, { k: 'marketing', n: 'Marketing' }, { k: 'tecnologia', n: 'Tecnologia' }, { k: 'financeiro', n: 'Financeiro' }, { k: 'comercial', n: 'Comercial' }, { k: 'geral', n: 'Geral' }];
+const EX_DEF = () => ({ labels: LABELS_DEF, boards: [{ id: 'principal', name: 'Principal' }], mission: '', vision: '', values: [], goals: [], notes: [], fincfg: { cats: FIN_CATS_DEF.map((c) => ({ ...c })), rules: [], reserve: { goal: 0, moves: [] } }, finitems: [], finext: { accounts: [{ id: 'principal', n: 'Conta principal', init: 0 }], transfers: [], sectors: EX_SECTORS_DEF(), budget: {}, goal: 0, tax: EX_TAX_DEF() } });
+const exGet = (k) => (k === 'labels' ? LABELS
+  : k === 'boards' ? ex.boards.filter((b) => !b.tmp).map((b) => { const o = { id: b.id, name: b.name }; if (b.color) o.color = b.color; if (b.own) { o.own = true; o.labels = Array.isArray(b.labels) ? b.labels : []; } return o; })
+  : k === 'fincfg' ? { cats: ex.fin.cats, rules: ex.fin.rules, reserve: ex.fin.reserve }
+  : k === 'finitems' ? ex.fin.items
+  : k === 'finext' ? { accounts: ex.fin.accounts, transfers: ex.fin.transfers, sectors: ex.fin.sectors, budget: ex.fin.budget, goal: ex.fin.goal, tax: ex.fin.tax } : ex.company[k]);
+const exPut = (k, v) => {
+  if (k === 'labels') LABELS = v;
+  else if (k === 'boards') ex.boards = v;
+  else if (k === 'fincfg') { ex.fin.cats = v.cats; ex.fin.rules = v.rules; ex.fin.reserve = v.reserve; }
+  else if (k === 'finitems') ex.fin.items = v;
+  else if (k === 'finext') { if (v.accounts.length) ex.fin.accounts = v.accounts; ex.fin.transfers = v.transfers; ex.fin.sectors = v.sectors; ex.fin.budget = v.budget; ex.fin.goal = v.goal; ex.fin.tax = v.tax; }
+  else ex.company[k] = v;
+};
+const exSnap = {};
+let exSynced = false;
+let exBusy = 0;
+const exTxt = (v, n) => (typeof v === 'string' ? v.slice(0, n) : '');
+const exRows = (v, n) => (Array.isArray(v) ? v.filter((x) => x && typeof x === 'object').slice(0, n) : null);
+const EX_COLOR = /^(#[0-9a-fA-F]{3,8}|var\(--l-[a-z]+\))$/;
+/* Limpa um valor qualquer vindo do servidor: só texto, número, verdadeiro/falso, listas e objetos simples. */
+function exDeep(v, d) {
+  if (v === null || typeof v === 'boolean') return v;
+  if (typeof v === 'number') return Number.isFinite(v) ? v : 0;
+  if (typeof v === 'string') return v.slice(0, 300);
+  if (d <= 0) return undefined;
+  if (Array.isArray(v)) return v.slice(0, 400).map((x) => exDeep(x, d - 1)).filter((x) => x !== undefined);
+  if (typeof v === 'object') {
+    const o = {};
+    Object.keys(v).slice(0, 30).forEach((k) => { if (/^[A-Za-z0-9_]{1,24}$/.test(k)) { const x = exDeep(v[k], d - 1); if (x !== undefined) o[k] = x; } });
+    return o;
+  }
+  return undefined;
+}
+const exList = (v, n) => { const a = exRows(v, n); return a && a.filter((x) => !Array.isArray(x)).map((x) => exDeep(x, 3)); };
+const exLabs = (a) => a.filter((l) => typeof l.k === 'string' && l.k && typeof l.c === 'string' && EX_COLOR.test(l.c)).map((l) => ({ k: l.k.slice(0, 40), n: exTxt(l.n, 20) || 'ETIQUETA', c: l.c }));
+/* Confere o formato de um dado vindo do servidor. undefined = inválido, é ignorado. */
+function exClean(k, v) {
+  if (k === 'mission' || k === 'vision') return typeof v === 'string' ? exTxt(v, 800) : undefined;
+  if (k === 'fincfg') {
+    if (!v || typeof v !== 'object' || Array.isArray(v)) return undefined;
+    const cats = exList(v.cats, 60), rules = exList(v.rules, 300), mv = v.reserve && typeof v.reserve === 'object' ? exList(v.reserve.moves, 1000) : null;
+    return {
+      cats: (cats || []).filter((c) => typeof c.k === 'string' && c.k && typeof c.c === 'string' && EX_COLOR.test(c.c)).map((c) => ({ k: c.k.slice(0, 40), n: exTxt(c.n, 30) || 'Categoria', c: c.c })),
+      rules: rules || [],
+      reserve: { goal: Math.max(0, +(v.reserve && v.reserve.goal) || 0), moves: mv || [] },
+    };
+  }
+  if (k === 'finitems') return exList(v, 3000) || undefined;
+  if (k === 'finext') {
+    if (!v || typeof v !== 'object' || Array.isArray(v)) return undefined;
+    const t = v.tax && typeof v.tax === 'object' && !Array.isArray(v.tax) ? v.tax : {}, bud = {};
+    if (v.budget && typeof v.budget === 'object' && !Array.isArray(v.budget)) Object.keys(v.budget).slice(0, 80).forEach((c) => { const n = +v.budget[c]; if (/^[A-Za-z0-9_-]{1,40}$/.test(c) && Number.isFinite(n) && n > 0) bud[c] = n; });
+    return {
+      accounts: exList(v.accounts, 40) || [],
+      transfers: exList(v.transfers, 2000) || [],
+      sectors: (exList(v.sectors, 40) || []).filter((x) => typeof x.k === 'string' && x.k).map((x) => ({ k: x.k.slice(0, 40), n: exTxt(x.n, 30) || 'Setor' })),
+      budget: bud,
+      goal: Math.max(0, +v.goal || 0),
+      tax: { on: t.on === true, label: exTxt(t.label, 40) || 'Simples Nacional', mode: t.mode === 'fixed' ? 'fixed' : 'percent', rate: Math.max(0, +t.rate || 0), fixed: Math.max(0, +t.fixed || 0), day: Math.min(28, Math.max(1, Math.round(+t.day || 20))) },
+    };
+  }
+  const a = exRows(v, 60);
+  if (!a) return undefined;
+  if (k === 'labels') return exLabs(a);
+  if (k === 'boards') { const b = a.filter((x) => typeof x.id === 'string' && x.id).map((x) => { const o = { id: x.id.slice(0, 40), name: exTxt(x.name, 30) || 'Quadro' }; if (typeof x.color === 'string' && EX_COLOR.test(x.color)) o.color = x.color; if (x.own === true) { o.own = true; o.labels = exLabs(exRows(x.labels, 60) || []); } return o; }); return b.length ? b : undefined; }
+  if (k === 'values') return a.map((x) => ({ id: exTxt(x.id, 40) || uid(), t: exTxt(x.t, 100), d: exTxt(x.d, 800) }));
+  if (k === 'goals') return a.map((x) => ({ id: exTxt(x.id, 40) || uid(), t: exTxt(x.t, 100), p: Math.max(0, Math.min(100, Math.round(+x.p || 0))), due: /^\d{4}-\d{2}-\d{2}$/.test(x.due) ? x.due : '' }));
+  if (k === 'notes') return a.map((x) => ({ id: exTxt(x.id, 40) || uid(), title: exTxt(x.title, 100), text: exTxt(x.text, 800) }));
+  return undefined;
+}
 function exLoad() {
   try {
     const s = JSON.parse(localStorage.getItem(EX_KEY));
@@ -2309,9 +2386,35 @@ function exLoad() {
     if (Array.isArray(s.home)) ex.home = HOME_DEF.map((d) => ({ k: d.k, on: (s.home.find((w) => w.k === d.k) || d).on }));
   } catch (e) { /* sem armazenamento */ }
 }
-function exSave() {
+function exSave(localOnly) {
   try { localStorage.setItem(EX_KEY, JSON.stringify({ labels: LABELS, company: ex.company, home: ex.home, boards: ex.boards, board: ex.board, fin: ex.fin, alert: ex.alert, me: ex.me, tpl: ex.tpl })); } catch (e) { /* sem armazenamento */ }
   try { renderAlertBadge(); } catch (e) { /* tela ainda não montada */ }
+  if (localOnly || !exSynced || state.mode !== 'sb' || !state.sb) return;
+  EX_SHARED.forEach((k) => {
+    const v = exGet(k), j = JSON.stringify(v);
+    if (j === exSnap[k]) return;
+    exSnap[k] = j;
+    exBusy++;
+    enqueue('extra/' + k, () => sbSaveExtra(k, v)
+      .catch((e) => { exSnap[k] = null; throw e; })
+      .finally(() => { exBusy--; if (!exBusy) sbSoon('quadro'); }));
+  });
+}
+/* Traz do servidor o que a equipe guardou. Espera quando há gravação em andamento ou alguém digitando,
+   para não apagar o que está sendo escrito; a próxima atualização aplica. */
+function exApplyRemote(d) {
+  const a = document.activeElement;
+  if (exBusy || !$('#mgScrim').hidden || (a && /^(INPUT|TEXTAREA)$/.test(a.tagName) && a.closest('#company, #finance, #boards'))) return;
+  const data = d && typeof d === 'object' ? d : {};
+  const def = EX_DEF();
+  EX_SHARED.forEach((k) => {
+    const v = data[k] === undefined ? undefined : exClean(k, data[k]);
+    if (v !== undefined) { exPut(k, v); exSnap[k] = JSON.stringify(exGet(k)); }
+    else exSnap[k] = JSON.stringify(def[k]);
+  });
+  exSynced = true;
+  finRun(); /* gera as recorrências do mês com as regras que vieram do servidor */
+  exSave(); /* primeira vez: sobe o que só existia neste aparelho */
 }
 
 /* ----- janela de gerenciamento (etiquetas e colunas) ----- */
@@ -2337,9 +2440,9 @@ const boardOfCard = (c) => { const k = state.cols.find((x) => x.id === c.col); r
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 function ensureBoards() {
   let ch = false;
-  state.cols.forEach((c) => { const b = bid(c); if (!ex.boards.some((x) => x.id === b)) { ex.boards.push({ id: b, name: 'Quadro ' + (ex.boards.length + 1) }); ch = true; } });
+  state.cols.forEach((c) => { const b = bid(c); if (!ex.boards.some((x) => x.id === b)) { ex.boards.push({ id: b, name: 'Quadro ' + (ex.boards.length + 1), tmp: true }); ch = true; } });
   if (!ex.boards.some((b) => b.id === ex.board)) { ex.board = ex.boards[0].id; ch = true; }
-  if (ch) exSave();
+  if (ch) exSave(true);
 }
 function switchBoard(id) { ex.board = id; exSave(); closeMenus(); render(); }
 function newBoard() {
@@ -3028,7 +3131,7 @@ function finConfig() {
           h('button', { type: 'button', class: 'rowitem', onclick: () => exportCsv(ex.fin.items, 'financas-completo.csv') }, h('span', { class: 'grow' }, 'Exportar todos os lançamentos (planilha)')),
           h('button', { type: 'button', class: 'rowitem', onclick: () => { const t = JSON.stringify({ app: 'senso-financas', versao: 1, data: new Date().toISOString(), fin: ex.fin }); openMg(exportMg('Backup de Finanças', 'backup-financas-' + todayStr() + '.json', t, t, 'application/json')); } }, h('span', { class: 'grow' }, 'Baixar backup (arquivo .json)')),
           h('button', { type: 'button', class: 'rowitem', onclick: () => openMg(importMg) }, h('span', { class: 'grow' }, 'Restaurar backup'))),
-        h('p', { class: 'note' }, 'Seus dados ficam só neste navegador. Faça um backup de vez em quando, principalmente antes de trocar de computador.'))))];
+        h('p', { class: 'note' }, state.mode === 'sb' ? 'Seus dados ficam salvos na nuvem e a equipe vê. Faça um backup de vez em quando.' : 'Seus dados ficam só neste navegador. Faça um backup de vez em quando, principalmente antes de trocar de computador.'))))];
 }
 
 function finSub(k) { ex.fsub = k; renderFinance(); const el = $('#finance'); if (el) el.scrollTop = 0; }
@@ -3490,6 +3593,7 @@ const sbOk = (r) => { if (r.error) throw r.error; return r; };
 const sbSave = (table, id, data) => state.sb.from(table).upsert({ id, data }).then(sbOk);
 const sbRemove = (table, id) => state.sb.from(table).delete().eq('id', id).then(sbOk);
 const sbSaveTitle = (title) => state.sb.from('quadro').upsert({ id: 1, data: { title } }).then(sbOk);
+const sbSaveExtra = (k, v) => state.sb.rpc('quadro_extra_set', { k, v }).then(sbOk);
 const sbAvailable = () => !!(window.SB_CFG && window.supabase && window.supabase.createClient);
 
 const sbTimers = {};
@@ -3522,12 +3626,16 @@ async function sbLoad(which) {
       }));
     }
     if (!which || which === 'quadro') {
-      jobs.push(sb.from('quadro').select('data').eq('id', 1).maybeSingle().then(sbOk).then((r) => {
-        const t0 = r.data && r.data.data && r.data.data.title, t = (t0 === 'Quadro da Equipe' || t0 === 'Tarefas da Equipe') ? 'SBase' : t0;
-        if (!t) return;
-        state.title = t;
-        const el = $('#boardTitle');
-        if (document.activeElement !== el) el.value = t;
+      jobs.push(sb.from('quadro').select('id,data').in('id', [1, 2]).then(sbOk).then((r) => {
+        const rows = r.data || [];
+        const r1 = rows.find((x) => x.id === 1), r2 = rows.find((x) => x.id === 2);
+        const t0 = r1 && r1.data && r1.data.title, t = (t0 === 'Quadro da Equipe' || t0 === 'Tarefas da Equipe') ? 'SBase' : t0;
+        if (t) {
+          state.title = t;
+          const el = $('#boardTitle');
+          if (document.activeElement !== el) el.value = t;
+        }
+        exApplyRemote(r2 && r2.data);
       }));
     }
     await Promise.all(jobs);
@@ -3566,6 +3674,8 @@ function sbStop() {
 function sbSignedOut() {
   chatStop();
   sbStop();
+  exSynced = false;
+  exBusy = 0;
   state.cards = [];
   state.cols = [];
   state.loaded = { cols: false, cards: false };
