@@ -575,7 +575,7 @@ button.cal-day:hover{background:var(--hover)}
 .hcol>.w{grid-column:auto}
 @media (max-width:900px){.hcols,.hcols.wide{grid-template-columns:minmax(0,1fr)}}
 .hgrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px;align-items:stretch;align-content:start}
-.w{grid-column:span 6;display:grid;gap:10px;min-width:0;padding:16px;border-radius:var(--r-lane);background:var(--card);box-shadow:0 0 0 1px var(--line)}
+.w{grid-column:span 6;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;min-width:0;padding:16px;border-radius:var(--r-lane);background:var(--card);box-shadow:0 0 0 1px var(--line)}
 .w.s{grid-column:span 4}.w.l{grid-column:span 12}.w.off{opacity:.5}
 @media (max-width:900px){.w,.w.s{grid-column:span 12}}
 .wh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -710,7 +710,8 @@ button.cal-day:hover{background:var(--hover)}
 .ftr.tot{background:var(--accent-soft);font-weight:700}
 .ftr>*:not(:first-child){text-align:right;white-space:nowrap}
 .ftr .pos{color:var(--ok)}.ftr .neg{color:var(--bad)}
-.dre{display:grid;gap:4px}
+.dre{display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
+.dre .r>:first-child{min-width:0;overflow-wrap:anywhere}.dre .r>:last-child{flex:none;max-width:100%;overflow-wrap:anywhere;text-align:right}
 .dre .r{display:flex;justify-content:space-between;gap:10px;padding:7px 10px;border-radius:9px}
 .dre .r.sub{padding-left:22px;color:var(--muted)}
 .dre .r.h{background:var(--lane);font-weight:700;margin-top:4px}
@@ -740,7 +741,8 @@ button.cal-day:hover{background:var(--hover)}
 @media (max-width:900px){.fgrid{grid-template-columns:minmax(0,1fr)}}
 .frow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--lane);cursor:pointer}
 .frow:hover{box-shadow:inset 0 0 0 1.5px var(--aqua)}
-.frow .fd{flex:1;min-width:0;display:grid}
+.frow .fd{flex:1;min-width:0;display:grid;grid-template-columns:minmax(0,1fr)}
+.frow .fd small{overflow-wrap:anywhere}
 .frow .fd b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .frow .fd small{color:var(--muted)}
 .frow .fv{font-weight:700;white-space:nowrap}.frow .fv.in{color:var(--ok)}.frow .fv.out{color:var(--bad)}
@@ -749,13 +751,17 @@ button.cal-day:hover{background:var(--hover)}
 .frow .tag.late{color:var(--bad)}
 .catbar{display:grid;gap:4px}.catbar>div{display:flex;justify-content:space-between;gap:8px;font-size:calc(13px * var(--fs,1))}
 .catbar .bar i{background:var(--c,var(--aqua))}
+.catbar{min-width:0;grid-template-columns:minmax(0,1fr)}.catbar>div>span{min-width:0;overflow-wrap:anywhere}.catbar>div>b{white-space:nowrap}
+.tile{min-width:0;grid-template-columns:minmax(0,1fr)}.tile b,.tile small{overflow-wrap:anywhere}
+.wh b{min-width:0;overflow-wrap:anywhere}
 .fbars{display:flex;gap:10px;align-items:flex-end;height:140px}
-.fb{flex:1;display:grid;gap:4px;justify-items:center;height:100%;grid-template-rows:1fr auto}
+@media(max-width:480px){.fbars{gap:4px}.fb small{font-size:10px;letter-spacing:-.2px}}
+.fb{flex:1;min-width:0;display:grid;gap:4px;justify-items:center;height:100%;grid-template-rows:1fr auto}
 .fb>div{display:flex;gap:3px;align-items:flex-end;width:100%;height:100%}
 .fb i{flex:1;min-height:2px;border-radius:4px 4px 0 0}.fb .in{background:var(--ok)}.fb .out{background:var(--bad)}
 .fb small{color:var(--muted);font-size:11px;text-transform:capitalize}
-.ff{display:grid;gap:6px}.ff2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.frm{display:grid;gap:14px}.fact{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap}
+.ff{display:grid;gap:6px;grid-template-columns:minmax(0,1fr)}.ff2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.frm{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}.frm>.btn.sm{white-space:normal;text-align:left;height:auto;min-height:36px;padding-top:6px;padding-bottom:6px}.fact{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap}
 /* ===== Visual: avisos, listas e celular ===== */
 :root{--navh:0px}
 .list{grid-template-columns:minmax(0,1fr)}
@@ -918,7 +924,7 @@ button.cal-day:hover{background:var(--hover)}
     <div class="prop"><span class="plabel">Etiquetas</span><div id="mLabels" class="labpick"></div><button type="button" id="mLabEdit" class="link" style="justify-self:start">Criar ou editar etiquetas</button></div>
     <div class="prop"><span class="plabel">Checklist</span><div id="mCheck" class="list"></div></div>
     <div class="prop"><span class="plabel">Anexos</span><div id="mAtt" class="list"></div></div>
-    <div class="prop" style="grid-auto-flow:column;justify-content:start;gap:8px"><button type="button" id="mArch" class="btn sm quiet">Arquivar cartão</button><button type="button" id="mCopy" class="btn sm quiet">Copiar cartão</button><button type="button" id="mTpl" class="btn sm quiet">Salvar como modelo</button></div>
+    <div class="prop" style="display:flex;flex-wrap:wrap;justify-content:flex-start;gap:8px"><button type="button" id="mArch" class="btn sm quiet">Arquivar cartão</button><button type="button" id="mCopy" class="btn sm quiet">Copiar cartão</button><button type="button" id="mTpl" class="btn sm quiet">Salvar como modelo</button></div>
     </div>
     <div class="mf">
       <button type="button" id="mDel" class="btn quiet danger">Excluir</button>
@@ -1009,6 +1015,26 @@ const TEAM = [
 const teamOf = (id) => TEAM.find((m) => m.id === id);
 const assigneeKeys = (arr) => (arr || []).filter((id) => teamOf(id));
 const PRIOS = { alta: 'Alta', media: 'Média', baixa: 'Baixa' };
+/* Dados vindos de fora (nuvem) podem estar fora do formato. Ajusta só o que quebraria a tela. */
+const arrOf = (v) => (Array.isArray(v) ? v : []);
+function cardNorm(x) {
+  const c = { ...x };
+  if (typeof c.title !== 'string') c.title = c.title == null ? '' : String(c.title);
+  if (c.desc != null && typeof c.desc !== 'string') c.desc = String(c.desc);
+  if (c.priority && !PRIOS[c.priority]) c.priority = '';
+  if (c.recur && !['day', 'week', '2week', 'month'].includes(c.recur)) c.recur = '';
+  if (c.due && !/^\d{4}-\d{2}-\d{2}$/.test(c.due)) c.due = '';
+  ['labels', 'assignees', 'att'].forEach((k) => { if (c[k] != null && !Array.isArray(c[k])) c[k] = []; });
+  if (c.checklist != null) c.checklist = arrOf(c.checklist).filter((i) => i && typeof i === 'object');
+  if (!Number.isFinite(+c.order)) c.order = 0; else if (typeof c.order !== 'number') c.order = +c.order;
+  return c;
+}
+function colNorm(x) {
+  const c = { ...x };
+  if (typeof c.title !== 'string') c.title = c.title == null ? '' : String(c.title);
+  if (!Number.isFinite(+c.order)) c.order = 0; else if (typeof c.order !== 'number') c.order = +c.order;
+  return c;
+}
 
 /* Cria elementos sem innerHTML: texto de outras pessoas nunca vira HTML. */
 function h(tag, props, ...kids) {
@@ -1147,9 +1173,11 @@ function welcomeCards(cols) {
   ].map((c) => ({ id: uid(), assignees: [], due: '', created: now, updated: now, ...c }));
 }
 
+/* Busca sem diferenciar maiúsculas e acentos ("acao" acha "ação"). */
+const fold = (s) => String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 function visible(c) {
-  const q = state.q.trim().toLowerCase();
-  if (q && !((c.title || '') + ' ' + (c.desc || '')).toLowerCase().includes(q)) return false;
+  const q = fold(state.q.trim());
+  if (q && !fold((c.title || '') + ' ' + (c.desc || '') + ' ' + (c.checklist || []).map((i) => i.t).join(' ')).includes(q)) return false;
   if (state.fPrio && c.priority !== state.fPrio) return false;
   if (state.fLabel && !labelKeys(c.labels).includes(state.fLabel)) return false;
   if (state.fWho === 'none') { if (assigneeKeys(c.assignees).length) return false; }
@@ -1167,7 +1195,7 @@ function cardEl(c, col) {
   if (c.due) meta.push(h('span', { class: 'mt' + (late ? ' late' : ''), title: late ? 'Atrasado' : 'Prazo' }, ico('cal'), dueText(c.due)));
   if (c.checklist && c.checklist.length) { const dn = c.checklist.filter((i) => i.d).length; meta.push(h('span', { class: 'mt' + (dn === c.checklist.length ? ' ok' : ''), title: 'Checklist' }, ico('check'), dn + '/' + c.checklist.length)); }
   if (c.att && c.att.length) meta.push(h('span', { class: 'mt', title: 'Anexos' }, ico('clip'), c.att.length));
-  if (c.recur) meta.push(h('span', { class: 'mt', title: 'Repete: ' + RECUR.find((r) => r[0] === c.recur)[1].toLowerCase() }, '↻'));
+  if (c.recur) meta.push(h('span', { class: 'mt', title: 'Repete: ' + recurName(c.recur).toLowerCase() }, '↻'));
   if (c.desc) meta.push(h('span', { class: 'mt', title: 'Tem descrição' }, ico('text')));
   const el = h('div', {
     class: 'card' + (done ? ' done' : ''), tabindex: 0, role: 'button', 'data-id': c.id,
@@ -2339,7 +2367,11 @@ function exClean(k, v) {
       reserve: { goal: Math.max(0, +(v.reserve && v.reserve.goal) || 0), moves: mv || [] },
     };
   }
-  if (k === 'finitems') return exList(v, 3000) || undefined;
+  if (k === 'finitems') {
+    /* Passou do limite: fica com os 3000 mais recentes (cortar do começo da lista apagaria os últimos lançamentos). */
+    if (Array.isArray(v) && v.length > 3000) v = v.filter((x) => x && typeof x === 'object').sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+    return exList(v, 3000) || undefined;
+  }
   if (k === 'finext') {
     if (!v || typeof v !== 'object' || Array.isArray(v)) return undefined;
     const t = v.tax && typeof v.tax === 'object' && !Array.isArray(v.tax) ? v.tax : {}, bud = {};
@@ -2350,7 +2382,7 @@ function exClean(k, v) {
       sectors: (exList(v.sectors, 40) || []).filter((x) => typeof x.k === 'string' && x.k).map((x) => ({ k: x.k.slice(0, 40), n: exTxt(x.n, 30) || 'Setor' })),
       budget: bud,
       goal: Math.max(0, +v.goal || 0),
-      tax: { on: t.on === true, label: exTxt(t.label, 40) || 'Simples Nacional', mode: t.mode === 'fixed' ? 'fixed' : 'percent', rate: Math.max(0, +t.rate || 0), fixed: Math.max(0, +t.fixed || 0), day: Math.min(28, Math.max(1, Math.round(+t.day || 20))) },
+      tax: { on: t.on === true, label: exTxt(t.label, 40) || 'Simples Nacional', mode: t.mode === 'fixed' ? 'fixed' : 'percent', rate: Math.max(0, +t.rate || 0), fixed: Math.max(0, +t.fixed || 0), day: Math.min(31, Math.max(1, Math.round(+t.day || 20))) },
     };
   }
   const a = exRows(v, 60);
@@ -2658,13 +2690,15 @@ const finSec = (k) => (ex.fin.sectors.find((s) => s.k === k) || {}).n || '';
 const finMonthItems = (y, m) => ex.fin.items.filter((i) => i.date && i.date.slice(0, 7) === y + '-' + pad2(m + 1));
 const finYearItems = (y) => ex.fin.items.filter((i) => i.date && i.date.slice(0, 4) === String(y));
 const finTotals = (list) => list.reduce((t, i) => { const v = +i.val || 0; if (i.type === 'in') { t.in += v; if (!i.paid) t.pin += v; } else { t.out += v; if (!i.paid) t.pout += v; } return t; }, { in: 0, out: 0, pin: 0, pout: 0 });
-const parseVal = (s) => { s = String(s).trim().replace(/^R\$\s*/, ''); if (!s) return NaN; if (s.includes(',') || /^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '').replace(',', '.'); return parseFloat(s); };
+const parseVal = (s) => { s = String(s).trim().replace(/^R\$\s*/, ''); if (!s) return NaN; if (s.includes(',') || /^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '').replace(',', '.'); return /^-?(\d+\.?\d*|\.\d+)$/.test(s) ? parseFloat(s) : NaN; };
 const ymKey = (y, m) => y + '-' + pad2(m + 1);
 const byDateAsc = (a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
 const byDateDesc = (a, b) => byDateAsc(b, a);
 const sumVal = (l) => l.reduce((s, i) => s + (+i.val || 0), 0);
 const sumBy = (list, key) => { const o = {}; list.forEach((i) => { const k = key(i); o[k] = (o[k] || 0) + (+i.val || 0); }); return Object.entries(o).sort((a, b) => b[1] - a[1]); };
 const num1 = (x) => (Math.round(x * 10) / 10).toString().replace('.', ',');
+const okDate = (d) => /^\d{4}-\d{2}-\d{2}$/.test(d || '') && +d.slice(0, 4) >= 1990 && +d.slice(0, 4) <= 2100;
+const okYm = (k) => /^\d{4}-\d{2}$/.test(k || '') && +k.slice(0, 4) >= 2000 && +k.slice(0, 4) <= 2100 && +k.slice(5) >= 1 && +k.slice(5) <= 12;
 const addMonths = (ds, n) => { const [y, m, d] = ds.split('-').map(Number); const t = new Date(y, m - 1 + n, 1); return dstr(t.getFullYear(), t.getMonth(), Math.min(d, new Date(t.getFullYear(), t.getMonth() + 1, 0).getDate())); };
 const mLabel = (y, m) => cap(MESES[m]) + ' ' + y;
 const accOf = (i) => (ex.fin.accounts.some((a) => a.id === i.acct) ? i.acct : ex.fin.accounts[0].id);
@@ -2717,7 +2751,8 @@ function exportCsv(list, name) {
   const rows = [...list].sort(byDateAsc).map((i) => [i.date.split('-').reverse().join('/'), i.type === 'in' ? 'Receita' : 'Despesa', i.desc, i.party || '', finCat(i.cat).n, finSec(i.sector), acc(i), i.method || '', i.nf || '', String(i.val).replace('.', ','), i.paid ? (i.type === 'in' ? 'Recebido' : 'Pago') : 'Pendente']);
   const cell = (v) => { let s = String(v == null ? '' : v); if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
   const csv = [head, ...rows].map((r) => r.map(cell).join(';')).join('\r\n');
-  const tsv = [head, ...rows].map((r) => r.map((v) => String(v == null ? '' : v).replace(/[\t\r\n]+/g, ' ')).join('\t')).join('\n');
+  const tcell = (v) => { let t = String(v == null ? '' : v).replace(/[\t\r\n]+/g, ' '); if (/^[=+\-@]/.test(t) && !/^-?\d+([.,]\d+)?$/.test(t)) t = "'" + t; return t; };
+  const tsv = [head, ...rows].map((r) => r.map(tcell).join('\t')).join('\n');
   openMg(exportMg('Exportar lançamentos (' + rows.length + ')', name, csv, tsv, 'text/csv;charset=utf-8'));
 }
 function finSanitize(raw) {
@@ -2726,7 +2761,7 @@ function finSanitize(raw) {
   const N = (v) => { v = +v; return isFinite(v) && v > 0 ? Math.round(v * 100) / 100 : 0; };
   const Z = (v) => { v = +v; return isFinite(v) ? Math.round(v * 100) / 100 : 0; };
   const C = (v) => (/^#[0-9a-f]{6}$/i.test(v) ? v : '#5E6B73');
-  const D = (v) => (/^\d{4}-\d{2}-\d{2}$/.test(v) ? v : '');
+  const D = (v) => (okDate(v) ? v : '');
   const YM = (v) => (/^\d{4}-\d{2}$/.test(v) ? v : '');
   const A = (v) => (Array.isArray(v) ? v.slice(0, 20000) : []);
   const out = { items: [], cats: [], rules: [], reserve: { goal: 0, moves: [] }, accounts: [], transfers: [], sectors: [], budget: {}, goal: 0, tax: { on: false, label: 'Simples Nacional', mode: 'percent', rate: 0, fixed: 0, day: 20 } };
@@ -2742,8 +2777,8 @@ function finSanitize(raw) {
     out.items.push(o);
   });
   A(raw.rules).forEach((r) => {
-    if (!r || !r.id || !N(r.val) || !YM(r.start) || (r.type !== 'in' && r.type !== 'out')) return;
-    out.rules.push({ id: S(r.id, 40), type: r.type, desc: S(r.desc, 80), val: N(r.val), day: Math.max(1, Math.min(31, parseInt(r.day, 10) || 1)), cat: S(r.cat, 40), start: r.start, end: YM(r.end), auto: !!r.auto, skip: A(r.skip).map(YM).filter(Boolean), party: S(r.party, 80), sector: S(r.sector, 40), acct: S(r.acct, 40) });
+    if (!r || !r.id || !N(r.val) || !okYm(r.start) || (r.type !== 'in' && r.type !== 'out')) return;
+    out.rules.push({ id: S(r.id, 40), type: r.type, desc: S(r.desc, 80), val: N(r.val), day: Math.max(1, Math.min(31, parseInt(r.day, 10) || 1)), cat: S(r.cat, 40), start: r.start, end: okYm(r.end) ? r.end : '', auto: !!r.auto, skip: A(r.skip).map(YM).filter(Boolean), party: S(r.party, 80), sector: S(r.sector, 40), acct: S(r.acct, 40) });
   });
   A(raw.transfers).forEach((t) => { if (t && D(t.date) && N(t.val) && t.from && t.to) out.transfers.push({ id: S(t.id, 40) || uid(), date: t.date, from: S(t.from, 40), to: S(t.to, 40), val: N(t.val), note: S(t.note, 60) }); });
   if (raw.reserve && typeof raw.reserve === 'object') {
@@ -2824,7 +2859,7 @@ function finForm(item) {
             h('button', { type: 'button', class: 'btn primary big', onclick: () => {
               const v = parseVal(f.val), n = isNew ? Math.max(1, Math.min(60, parseInt(f.n, 10) || 1)) : 1;
               if (!(v > 0)) { err.textContent = 'Informe um valor maior que zero.'; return; }
-              if (!f.date) { err.textContent = 'Informe a data.'; return; }
+              if (!okDate(f.date)) { err.textContent = 'Informe uma data válida (entre 1990 e 2100).'; return; }
               const out = { ...(item || {}), id: f.id, type: f.type, desc: f.desc.trim() || finCat(f.cat).n, val: Math.round(v * 100) / 100, date: f.date, cat: f.cat, paid: !!f.paid, party: (f.party || '').trim(), sector: f.sector || '', acct: f.acct || '', method: f.method || '', nf: (f.nf || '').trim(), note: (f.note || '').trim() };
               if (item && item.rid) out.manual = true;
               if (isNew && n > 1) {
@@ -2877,7 +2912,7 @@ function transferForm(s) {
         const v = parseVal(f.val);
         if (f.from === f.to) { err.textContent = 'Escolha contas diferentes.'; return; }
         if (!(v > 0)) { err.textContent = 'Informe um valor maior que zero.'; return; }
-        if (!f.date) { err.textContent = 'Informe a data.'; return; }
+        if (!okDate(f.date)) { err.textContent = 'Informe uma data válida (entre 1990 e 2100).'; return; }
         ex.fin.transfers.push({ id: uid(), date: f.date, from: f.from, to: f.to, val: Math.round(v * 100) / 100, note: f.note.trim() });
         exSave(); closeMg(); toast('Transferência registrada');
       } }, 'Transferir'))));
@@ -2961,7 +2996,7 @@ function finLanc(y, m) {
   const base = finMonthItems(y, m);
   const match = (i) => (ex.ff === 'in' ? i.type === 'in' : ex.ff === 'out' ? i.type === 'out' : ex.ff === 'pend' ? !i.paid : true)
     && (!ex.fcat || i.cat === ex.fcat) && (!ex.fsec || (i.sector || '') === ex.fsec) && (!ex.facc || accOf(i) === ex.facc)
-    && (!ex.fq.trim() || [i.desc, i.party, i.nf, i.note, finCat(i.cat).n].join(' ').toLowerCase().includes(ex.fq.trim().toLowerCase()));
+    && (!ex.fq.trim() || fold([i.desc, i.party, i.nf, i.note, finCat(i.cat).n].join(' ')).includes(fold(ex.fq.trim())));
   const box = h('div', { class: 'list' }), foot = h('div', { class: 'fsum' });
   const paint = () => {
     const list = base.filter(match).sort(byDateDesc), t = finTotals(list);
@@ -3172,6 +3207,7 @@ function finRun() {
   const lastKey = nx.getFullYear() + '-' + pad2(nx.getMonth() + 1);
   let ch = false;
   ex.fin.rules.forEach((r) => {
+    if (!okYm(r.start)) return;
     let [y, m] = r.start.split('-').map(Number);
     for (let g = 0; g < 600; g++) {
       const key = y + '-' + pad2(m);
@@ -3233,7 +3269,8 @@ function ruleForm(rule) {
               const v = parseVal(f.val), day = parseInt(f.day, 10);
               if (!(v > 0)) { err.textContent = 'Informe um valor maior que zero.'; return; }
               if (!(day >= 1 && day <= 31)) { err.textContent = 'O dia deve estar entre 1 e 31.'; return; }
-              if (!f.start) { err.textContent = 'Informe o mês de início.'; return; }
+              if (!okYm(f.start)) { err.textContent = 'Informe um mês de início válido (entre 2000 e 2100).'; return; }
+              if (f.end && !okYm(f.end)) { err.textContent = 'Informe um mês de fim válido (entre 2000 e 2100).'; return; }
               if (f.end && f.end < f.start) { err.textContent = 'O fim precisa ser depois do início.'; return; }
               const r = { id: f.id, type: f.type, desc: f.desc.trim() || finCat(f.cat).n, val: Math.round(v * 100) / 100, day, cat: f.cat, start: f.start, end: f.end || '', auto: !!f.auto, skip: (rule && rule.skip) || [], party: (f.party || '').trim(), sector: f.sector || '', acct: f.acct || '' };
               const i = ex.fin.rules.findIndex((x) => x.id === r.id);
@@ -3268,7 +3305,7 @@ function rsvForm(kind) {
         h('div', { class: 'fact' }, h('span'), h('button', { type: 'button', class: 'btn primary big', onclick: () => {
           const v = parseVal(f.val);
           if (!(v > 0)) { err.textContent = 'Informe um valor maior que zero.'; return; }
-          if (!f.date) { err.textContent = 'Informe a data.'; return; }
+          if (!okDate(f.date)) { err.textContent = 'Informe uma data válida (entre 1990 e 2100).'; return; }
           if (!dep && v > reserveBal() + 0.005) { err.textContent = 'A reserva tem apenas ' + brl(reserveBal()) + '.'; return; }
           const mv = { id: uid(), date: f.date, val: dep ? v : -v, note: f.note.trim() };
           if (f.link) {
@@ -3617,13 +3654,13 @@ async function sbLoad(which) {
     const jobs = [];
     if (!which || which === 'colunas') {
       jobs.push(sb.from('colunas').select('id,data').then(sbOk).then((r) => {
-        state.cols = r.data.map((x) => ({ id: x.id, ...x.data }));
+        state.cols = r.data.map((x) => colNorm({ id: x.id, ...x.data }));
         state.loaded.cols = true;
       }));
     }
     if (!which || which === 'cartoes') {
       jobs.push(sb.from('cartoes').select('id,data').then(sbOk).then((r) => {
-        state.cards = r.data.map((x) => ({ id: x.id, ...x.data }));
+        state.cards = r.data.map((x) => cardNorm({ id: x.id, ...x.data }));
         state.loaded.cards = true;
       }));
     }
@@ -3812,6 +3849,7 @@ function toggleMine() {
 
 /* ----- Repetição ----- */
 const RECUR = [['', 'Não repete'], ['day', 'Todo dia'], ['week', 'Toda semana'], ['2week', 'A cada 2 semanas'], ['month', 'Todo mês']];
+const recurName = (r) => (RECUR.find((x) => x[0] === r) || ['', 'Repete'])[1];
 const recurNext = (ds, r) => {
   if (r === 'month') return addMonths(ds, 1);
   const [y, m, d] = ds.split('-').map(Number), t = new Date(y, m - 1, d);
@@ -3858,7 +3896,7 @@ function tplMg(defCol) {
         let armed = false;
         const rm = h('button', { type: 'button', class: 'btn sm quiet danger', onclick: () => { if (!armed) { armed = true; rm.textContent = 'Confirmar'; return; } T[kind] = T[kind].filter((x) => x.id !== t.id); exSave(); draw(); } }, 'Excluir');
         return h('div', { class: 'mrow' }, h('span', { style: 'flex:1;min-width:0;display:grid' }, h('b', { style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap' }, t.name),
-          h('small', { style: 'color:var(--muted)' }, kind === 'cards' ? [(t.checklist || []).length ? (t.checklist.length + ' itens na checklist') : 'Sem checklist', t.recur ? RECUR.find((r) => r[0] === t.recur)[1] : ''].filter(Boolean).join(' · ') : (t.cards || []).length + ' cartões')),
+          h('small', { style: 'color:var(--muted)' }, kind === 'cards' ? [(t.checklist || []).length ? (t.checklist.length + ' itens na checklist') : 'Sem checklist', t.recur ? recurName(t.recur) : ''].filter(Boolean).join(' · ') : (t.cards || []).length + ' cartões')),
           state.canWrite && h('button', { type: 'button', class: 'btn sm primary', onclick: () => use(t) }, 'Usar'), state.canWrite && rm);
       };
       fill(s, mgHead('Modelos'),
@@ -3878,9 +3916,9 @@ function tplMg(defCol) {
 
 /* ----- Busca em todos os quadros ----- */
 function qUpdate() {
-  const pop = $('#qPop'), q = state.q.trim().toLowerCase();
+  const pop = $('#qPop'), q = fold(state.q.trim());
   if (q.length < 2) { pop.hidden = true; return; }
-  const hits = state.cards.filter((c) => ((c.title || '') + ' ' + (c.desc || '') + ' ' + (c.checklist || []).map((i) => i.t).join(' ')).toLowerCase().includes(q));
+  const hits = state.cards.filter((c) => fold((c.title || '') + ' ' + (c.desc || '') + ' ' + (c.checklist || []).map((i) => i.t).join(' ')).includes(q));
   const here = new Set(bCols().map((c) => c.id)), other = hits.filter((c) => !here.has(c.col) || c.arch);
   fill(pop, h('span', { class: 'flabel' }, 'Em todos os quadros · ' + hits.length),
     hits.length === 0 && h('p', { class: 'empty' }, 'Nada encontrado.'),
@@ -4299,10 +4337,10 @@ const use = (name) => {
 function startLocal() {
   state.mode = 'local';
   const saved = lsLoad();
-  if (saved && Array.isArray(saved.cols) && saved.cols.length) {
-    state.cols = saved.cols;
-    state.cards = saved.cards || [];
-    state.title = saved.title || state.title;
+  if (saved && Array.isArray(saved.cols) && saved.cols.some((x) => x && typeof x === 'object' && x.id)) {
+    state.cols = saved.cols.filter((x) => x && typeof x === 'object' && x.id).map(colNorm);
+    state.cards = arrOf(saved.cards).filter((x) => x && typeof x === 'object' && x.id).map(cardNorm);
+    state.title = typeof saved.title === 'string' && saved.title ? saved.title : state.title;
   } else {
     state.cols = defaultCols();
     state.cards = welcomeCards(state.cols);
@@ -4326,14 +4364,14 @@ function startDb() {
     render();
   };
   state.db.collection('columns').onSnapshot((s) => {
-    state.cols = s.docs.map((d) => ({ id: d.id, ...d.data() }));
+    state.cols = s.docs.map((d) => colNorm({ id: d.id, ...d.data() }));
     state.loaded.cols = true;
     fresh.cols = !s.metadata.fromCache;
     settle();
     render();
   }, onErr);
   state.db.collection('cards').onSnapshot((s) => {
-    state.cards = s.docs.map((d) => ({ id: d.id, ...d.data() }));
+    state.cards = s.docs.map((d) => cardNorm({ id: d.id, ...d.data() }));
     state.loaded.cards = true;
     fresh.cards = !s.metadata.fromCache;
     settle();
